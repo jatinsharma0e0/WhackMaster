@@ -40,8 +40,9 @@ body {
 }
 
 /* Hide default cursor when using custom cursor */
-body.custom-cursor-active {
-    cursor: none;
+body.custom-cursor-active,
+body.custom-cursor-active * {
+    cursor: none !important;
 }
 
 @keyframes cursorRotate {

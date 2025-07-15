@@ -669,8 +669,8 @@ function createCursorOverlay() {
     // Track mouse movement
     document.addEventListener('mousemove', updateOverlayPosition);
     
-    // Add rotation animation on any click within the game area
-    document.addEventListener('mousedown', (e) => {
+    // Add rotation animation on any click anywhere on the page
+    document.addEventListener('click', (e) => {
         animateCursorRotation();
     });
 }
