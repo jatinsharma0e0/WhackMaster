@@ -45,6 +45,9 @@ let pressedKeys = new Set();
 // Keyboard Cursor Variables
 let keyboardCursor = null;
 let currentCursorPosition = -1; // -1 means not positioned
+let isKeyboardCursorActive = false;
+let mouseX = 0;
+let mouseY = 0;
 
 
 // DOM Elements
@@ -139,6 +142,9 @@ function initializeEventListeners() {
     // Keyboard controls
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keyup', handleKeyUp);
+    
+    // Mouse tracking for custom cursor
+    document.addEventListener('mousemove', handleMouseMove);
     
     // Modal click outside to close
     elements.gameOverModal.addEventListener('click', function(e) {
@@ -604,16 +610,22 @@ function moveKeyboardCursorToHole(holeIndex) {
     if (!holeContainer) return;
     
     const holeRect = holeContainer.getBoundingClientRect();
-    const gridRect = elements.holesGrid.getBoundingClientRect();
     
-    // Calculate position relative to the grid
-    const x = holeRect.left - gridRect.left + (holeRect.width / 2);
-    const y = holeRect.top - gridRect.top + (holeRect.height / 2);
+    // Calculate absolute position on the page
+    const x = holeRect.left + (holeRect.width / 2);
+    const y = holeRect.top + (holeRect.height / 2);
+    
+    // Update the cursor position
+    mouseX = x;
+    mouseY = y;
     
     // Position cursor at the center of the hole
     keyboardCursor.style.left = `${x}px`;
     keyboardCursor.style.top = `${y}px`;
     keyboardCursor.style.display = 'block';
+    
+    // Activate keyboard cursor mode
+    isKeyboardCursorActive = true;
     
     // Add animation class
     keyboardCursor.classList.add('cursor-move');
@@ -630,7 +642,21 @@ function hideKeyboardCursor() {
     if (!keyboardCursor) return;
     
     keyboardCursor.style.display = 'none';
+    isKeyboardCursorActive = false;
     currentCursorPosition = -1;
+}
+
+function handleMouseMove(event) {
+    if (!isKeyboardCursorActive) {
+        mouseX = event.clientX;
+        mouseY = event.clientY;
+        
+        if (keyboardCursor) {
+            keyboardCursor.style.left = `${mouseX}px`;
+            keyboardCursor.style.top = `${mouseY}px`;
+            keyboardCursor.style.display = 'block';
+        }
+    }
 }
 
 
