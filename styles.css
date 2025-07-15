@@ -175,8 +175,34 @@ img, svg, canvas, video {
 .hole-container *,
 .hole,
 .hole *,
+.hole:hover,
+.hole:active,
+.hole:focus,
 .mole,
-.mole * {
+.mole *,
+.mole:hover,
+.mole:active,
+.mole:focus {
+    cursor: url("assets/hammer-cursor.png") 16 16, pointer !important;
+}
+
+/* Additional overrides for specific states */
+.game-board:hover,
+.game-board:active,
+.game-board:focus {
+    cursor: url("assets/hammer-cursor.png") 16 16, pointer !important;
+}
+
+/* Force hammer cursor on all interactive elements */
+.game-board *:hover,
+.game-board *:active,
+.game-board *:focus,
+.holes-grid *:hover,
+.holes-grid *:active,
+.holes-grid *:focus,
+.hole-container:hover,
+.hole-container:active,
+.hole-container:focus {
     cursor: url("assets/hammer-cursor.png") 16 16, pointer !important;
 }
 

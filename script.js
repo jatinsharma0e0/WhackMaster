@@ -153,6 +153,25 @@ function initializeEventListeners() {
             });
         }
     });
+    
+    // Ensure hammer cursor is maintained during mouse interactions
+    document.addEventListener('mouseover', function(event) {
+        if (event.target.closest('.game-board')) {
+            event.target.style.cursor = 'url("assets/hammer-cursor.png") 16 16, pointer !important';
+        }
+    });
+    
+    document.addEventListener('mousedown', function(event) {
+        if (event.target.closest('.game-board')) {
+            event.target.style.cursor = 'url("assets/hammer-cursor.png") 16 16, pointer !important';
+        }
+    });
+    
+    document.addEventListener('click', function(event) {
+        if (event.target.closest('.game-board')) {
+            event.target.style.cursor = 'url("assets/hammer-cursor.png") 16 16, pointer !important';
+        }
+    });
 }
 
 /**
