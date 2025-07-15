@@ -188,75 +188,82 @@ def generate_background_music():
     write_wav('background_music.wav', sound)
 
 def generate_ambient_sound():
-    """Generate cheerful menu ambient music"""
+    """Generate cheerful menu ambient music - clean version without buzzing"""
     sample_rate = 44100
     loop_duration = 8.0  # 8 second loop
     t = np.linspace(0, loop_duration, int(sample_rate * loop_duration))
     
-    # Gentle melody
+    # Gentle melody with wider spacing to prevent frequency interference
     melody = [
         {'freq': 523, 'start': 0.0, 'duration': 0.8},   # C5
-        {'freq': 659, 'start': 0.9, 'duration': 0.4},   # E5
-        {'freq': 784, 'start': 1.4, 'duration': 0.4},   # G5
-        {'freq': 659, 'start': 1.9, 'duration': 0.4},   # E5
-        {'freq': 523, 'start': 2.4, 'duration': 0.8},   # C5
-        {'freq': 587, 'start': 3.3, 'duration': 0.6},   # D5
-        {'freq': 659, 'start': 4.0, 'duration': 0.6},   # E5
-        {'freq': 523, 'start': 4.7, 'duration': 0.8},   # C5
-        {'freq': 392, 'start': 5.6, 'duration': 0.4},   # G4
-        {'freq': 440, 'start': 6.1, 'duration': 0.4},   # A4
-        {'freq': 523, 'start': 6.6, 'duration': 1.2},   # C5
+        {'freq': 659, 'start': 1.0, 'duration': 0.4},   # E5
+        {'freq': 784, 'start': 1.6, 'duration': 0.4},   # G5
+        {'freq': 659, 'start': 2.2, 'duration': 0.4},   # E5
+        {'freq': 523, 'start': 2.8, 'duration': 0.8},   # C5
+        {'freq': 587, 'start': 3.8, 'duration': 0.6},   # D5
+        {'freq': 659, 'start': 4.6, 'duration': 0.6},   # E5
+        {'freq': 523, 'start': 5.4, 'duration': 0.8},   # C5
+        {'freq': 440, 'start': 6.4, 'duration': 0.4},   # A4
+        {'freq': 523, 'start': 7.0, 'duration': 0.8},   # C5
     ]
     
     sound = np.zeros_like(t)
     
-    # Add melody with triangle wave
+    # Add melody with pure sine waves and smooth envelopes
     for note in melody:
         start_sample = int(note['start'] * sample_rate)
         end_sample = int((note['start'] + note['duration']) * sample_rate)
-        note_t = t[start_sample:end_sample] - note['start']
         
-        if len(note_t) > 0:
-            note_sound = np.sin(2 * np.pi * note['freq'] * note_t)
+        if end_sample <= len(sound):
+            note_t = t[start_sample:end_sample] - note['start']
             
-            # Gentle envelope
-            envelope = np.ones_like(note_t) * 0.04
-            if len(envelope) > 20:
-                envelope[:10] = np.linspace(0, 0.04, 10)
-                envelope[-10:] = np.linspace(0.04, 0, 10)
-            
-            note_sound = note_sound * envelope
-            sound[start_sample:end_sample] += note_sound
+            if len(note_t) > 0:
+                # Pure sine wave for clean sound
+                note_sound = np.sin(2 * np.pi * note['freq'] * note_t)
+                
+                # Smooth envelope to prevent clicks and pops
+                envelope = np.ones_like(note_t) * 0.03
+                fade_samples = min(len(envelope) // 8, 2000)  # Smooth fade
+                if len(envelope) > fade_samples * 2:
+                    envelope[:fade_samples] = np.linspace(0, 0.03, fade_samples)
+                    envelope[-fade_samples:] = np.linspace(0.03, 0, fade_samples)
+                
+                note_sound = note_sound * envelope
+                sound[start_sample:end_sample] += note_sound
     
-    # Add soft bass
-    bass_times = [0, 2, 4, 6]
-    bass_freqs = [131, 165, 196, 147]  # C3, E3, G3, D3
+    # Add very soft bass - reduced amplitude and simplified timing
+    bass_times = [0, 4]  # Only two bass notes to reduce complexity
+    bass_freqs = [131, 147]  # C3, D3
     
     for i, start_time in enumerate(bass_times):
         freq = bass_freqs[i]
         start_sample = int(start_time * sample_rate)
-        duration = 1.5
+        duration = 3.5  # Longer, overlapping bass notes
         end_sample = int((start_time + duration) * sample_rate)
         
         if end_sample <= len(sound):
             bass_t = t[start_sample:end_sample] - start_time
-            bass_sound = np.sin(2 * np.pi * freq * bass_t) * 0.02
+            # Very low amplitude bass to avoid interference
+            bass_sound = np.sin(2 * np.pi * freq * bass_t) * 0.015
+            
+            # Smooth bass envelope
+            bass_envelope = np.ones_like(bass_t)
+            fade_samples = len(bass_t) // 4
+            if len(bass_envelope) > fade_samples * 2:
+                bass_envelope[:fade_samples] = np.linspace(0, 1, fade_samples)
+                bass_envelope[-fade_samples:] = np.linspace(1, 0, fade_samples)
+            
+            bass_sound = bass_sound * bass_envelope
             sound[start_sample:end_sample] += bass_sound
     
-    # Add bell-like accompaniment
-    bell_times = [0, 3, 6]
-    for start_time in bell_times:
-        start_sample = int(start_time * sample_rate)
-        duration = 2.0
-        end_sample = int((start_time + duration) * sample_rate)
-        
-        if end_sample <= len(sound):
-            bell_t = t[start_sample:end_sample] - start_time
-            bell_freq = 523 * 2  # High C
-            bell_sound = np.sin(2 * np.pi * bell_freq * bell_t)
-            bell_envelope = np.exp(-bell_t / 0.5)
-            bell_sound = bell_sound * bell_envelope * 0.02
-            sound[start_sample:end_sample] += bell_sound
+    # Remove bell accompaniment to eliminate potential frequency conflicts
+    # Keep it simple and clean
+    
+    # Apply gentle low-pass filtering effect by reducing high frequency content
+    # Normalize to prevent clipping
+    max_val = np.max(np.abs(sound))
+    if max_val > 0:
+        sound = sound / max_val * 0.8  # Leave headroom to prevent clipping
     
     write_wav('ambient_music.wav', sound)
 
