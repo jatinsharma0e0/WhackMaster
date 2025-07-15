@@ -260,6 +260,78 @@ def generate_ambient_sound():
     
     write_wav('ambient_music.wav', sound)
 
+def generate_explosion_sound():
+    """Generate explosion sound effect - dramatic boom with rumble"""
+    sample_rate = 44100
+    duration = 0.8
+    t = np.linspace(0, duration, int(sample_rate * duration))
+    
+    # Multiple layers for rich explosion sound
+    sound = np.zeros_like(t)
+    
+    # Layer 1: Initial sharp crack (high frequency noise burst)
+    crack_duration = 0.05
+    crack_samples = int(crack_duration * sample_rate)
+    crack_noise = np.random.normal(0, 0.3, crack_samples)
+    crack_envelope = np.exp(-np.linspace(0, 20, crack_samples))
+    crack_sound = crack_noise * crack_envelope
+    sound[:crack_samples] += crack_sound
+    
+    # Layer 2: Mid-frequency boom (sine wave sweep)
+    boom_start = 0.02
+    boom_duration = 0.3
+    boom_start_sample = int(boom_start * sample_rate)
+    boom_end_sample = int((boom_start + boom_duration) * sample_rate)
+    boom_t = t[boom_start_sample:boom_end_sample] - boom_start
+    
+    # Frequency sweep from 200Hz to 50Hz
+    freq_start = 200
+    freq_end = 50
+    frequency = freq_start + (freq_end - freq_start) * boom_t / boom_duration
+    boom_wave = np.sin(2 * np.pi * frequency * boom_t)
+    boom_envelope = np.exp(-boom_t / 0.15)
+    boom_sound = boom_wave * boom_envelope * 0.4
+    sound[boom_start_sample:boom_end_sample] += boom_sound
+    
+    # Layer 3: Low-frequency rumble (bass component)
+    rumble_start = 0.1
+    rumble_duration = 0.6
+    rumble_start_sample = int(rumble_start * sample_rate)
+    rumble_end_sample = int((rumble_start + rumble_duration) * sample_rate)
+    rumble_t = t[rumble_start_sample:rumble_end_sample] - rumble_start
+    
+    # Low frequency rumble with modulation
+    rumble_freq = 40 + 20 * np.sin(2 * np.pi * 5 * rumble_t)
+    rumble_wave = np.sin(2 * np.pi * rumble_freq * rumble_t)
+    rumble_envelope = np.exp(-rumble_t / 0.3)
+    rumble_sound = rumble_wave * rumble_envelope * 0.3
+    sound[rumble_start_sample:rumble_end_sample] += rumble_sound
+    
+    # Layer 4: Debris/crackling (filtered noise)
+    debris_start = 0.15
+    debris_duration = 0.4
+    debris_start_sample = int(debris_start * sample_rate)
+    debris_end_sample = int((debris_start + debris_duration) * sample_rate)
+    debris_noise = np.random.normal(0, 0.15, debris_end_sample - debris_start_sample)
+    debris_envelope = np.exp(-np.linspace(0, 8, debris_end_sample - debris_start_sample))
+    debris_sound = debris_noise * debris_envelope
+    sound[debris_start_sample:debris_end_sample] += debris_sound
+    
+    # Apply overall envelope to smooth the sound
+    overall_envelope = np.ones_like(t)
+    fade_samples = int(0.1 * sample_rate)
+    if len(overall_envelope) > fade_samples:
+        overall_envelope[-fade_samples:] = np.linspace(1, 0, fade_samples)
+    
+    sound = sound * overall_envelope
+    
+    # Normalize to prevent clipping
+    max_val = np.max(np.abs(sound))
+    if max_val > 0:
+        sound = sound / max_val * 0.8
+    
+    write_wav('explosion.wav', sound)
+
 if __name__ == "__main__":
     print("Generating audio files...")
     
@@ -277,5 +349,8 @@ if __name__ == "__main__":
     
     generate_ambient_sound()
     print("✓ Generated ambient_music.wav")
+    
+    generate_explosion_sound()
+    print("✓ Generated explosion.wav")
     
     print("All audio files generated successfully!")

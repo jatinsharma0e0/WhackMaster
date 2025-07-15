@@ -2,7 +2,11 @@
 
 ## Overview
 
-Successfully converted from React/TypeScript to pure HTML5, CSS3, and JavaScript. The game is now completely self-contained with no dependencies, build tools, or frameworks required. All original features are preserved including animations, sound effects, scoring, and responsive design. The game runs by simply opening index.html in any modern web browser.
+Successfully converted from React/TypeScript to pure HTML5, CSS3, and JavaScript. The game is now completely self-contained with no dependencies, build tools, or frameworks required. All original features are preserved including animations, sound effects, scoring, and responsive design. 
+
+**NEW FEATURE**: Added bomb functionality that enhances gameplay challenge - bombs appear after 5 seconds of gameplay and explode on contact, instantly ending the game. This adds strategic depth where players must carefully identify targets before clicking.
+
+The game runs by simply opening index.html in any modern web browser.
 
 ## User Preferences
 
@@ -32,6 +36,7 @@ Visual preferences: Custom hammer icon instead of emoji characters.
 ### Game Logic
 - **Game State Management**: Handles game timing, score tracking, and high score persistence
 - **Mole Management**: Controls mole visibility, hit detection, and visual effects
+- **Bomb System**: Manages bomb spawning (starts after 5 seconds), explosion detection, and instant game over
 - **Local Storage**: Persists high scores between sessions
 
 ### UI Components
@@ -97,6 +102,7 @@ Visual preferences: Custom hammer icon instead of emoji characters.
 │       ├── game_over.wav          # Game over sound sequence (220KB)
 │       ├── background_music.wav   # Energetic gameplay music (265KB)
 │       ├── ambient_music.wav      # Gentle menu music (706KB)
+│       ├── explosion.wav          # Bomb explosion sound effect (35KB)
 │       └── generate_audio_files.py # Script to regenerate audio files
 └── README.md               # Documentation
 ```

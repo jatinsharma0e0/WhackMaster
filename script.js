@@ -18,6 +18,20 @@ let moles = Array(9).fill(null).map(() => ({
     showHitEffect: false
 }));
 
+// Bomb States (9 holes, indexed 0-8)
+let bombs = Array(9).fill(null).map(() => ({
+    isVisible: false,
+    isHit: false
+}));
+
+// Bomb Management Variables
+let bombSpawnStartTime = 5000; // Start spawning bombs after 5 seconds
+let bombSpawnInterval = 5000; // 5 second interval between bomb spawns
+let maxBombsPerInterval = 2; // Maximum 2 bombs per interval
+let bombTimeouts = [];
+let currentBombCount = 0;
+let bombSpawnTimer = null;
+
 // Game Control Variables
 let gameInterval = null;
 let moleTimeouts = [];
@@ -90,7 +104,12 @@ function createGameBoard() {
         mole.className = 'mole';
         mole.innerHTML = '🐹';
         
+        const bomb = document.createElement('div');
+        bomb.className = 'bomb';
+        bomb.innerHTML = '💣';
+        
         hole.appendChild(mole);
+        hole.appendChild(bomb);
         holeContainer.appendChild(hole);
         elements.holesGrid.appendChild(holeContainer);
     }
@@ -143,7 +162,8 @@ function loadAudioFiles() {
         'mole_pop.wav', 
         'game_over.wav',
         'background_music.wav',
-        'ambient_music.wav'
+        'ambient_music.wav',
+        'explosion.wav'
     ];
     
     soundFiles.forEach(filename => {
@@ -191,6 +211,18 @@ function playGameOverSound() {
         audioFiles.game_over.play().catch(e => console.log('Game over sound failed:', e));
     } catch (e) {
         console.log('Game over sound error:', e);
+    }
+}
+
+function playExplosionSound() {
+    if (!isSoundEnabled || !audioFiles.explosion) return;
+    
+    try {
+        audioFiles.explosion.currentTime = 0;
+        audioFiles.explosion.volume = 0.7;
+        audioFiles.explosion.play().catch(e => console.log('Explosion sound failed:', e));
+    } catch (e) {
+        console.log('Explosion sound error:', e);
     }
 }
 
@@ -271,6 +303,12 @@ function toggleSound() {
 function clearAllTimeouts() {
     moleTimeouts.forEach(timeout => clearTimeout(timeout));
     moleTimeouts = [];
+    bombTimeouts.forEach(timeout => clearTimeout(timeout));
+    bombTimeouts = [];
+    if (bombSpawnTimer) {
+        clearInterval(bombSpawnTimer);
+        bombSpawnTimer = null;
+    }
 }
 
 function hideMole(index) {
@@ -357,7 +395,73 @@ function spawnMoles() {
     moleTimeouts.push(initialTimeout);
 }
 
+// Bomb Management Functions
+function hideBomb(index) {
+    bombs[index].isVisible = false;
+    const holeContainer = document.querySelector(`[data-index="${index}"]`);
+    const bomb = holeContainer.querySelector('.bomb');
+    const hole = holeContainer.querySelector('.hole');
+    
+    bomb.classList.remove('visible');
+    if (!moles[index].isVisible) {
+        hole.className = 'hole empty';
+    }
+}
 
+function showBomb(index) {
+    bombs[index] = { isVisible: true, isHit: false };
+    
+    const holeContainer = document.querySelector(`[data-index="${index}"]`);
+    const bomb = holeContainer.querySelector('.bomb');
+    const hole = holeContainer.querySelector('.hole');
+    
+    bomb.classList.add('visible');
+    hole.className = 'hole bomb-active';
+    
+    // Hide bomb after random duration (1500ms to 3000ms)
+    const hideTime = Math.random() * 1500 + 1500;
+    const timeout = setTimeout(() => hideBomb(index), hideTime);
+    bombTimeouts.push(timeout);
+}
+
+function spawnBombs() {
+    if (!gameState.isPlaying) return;
+    
+    const spawnRandomBombs = () => {
+        if (!gameState.isPlaying) return;
+        
+        // Only spawn bombs if at least 5 seconds have passed
+        if (gameState.timeLeft > 25) return;
+        
+        // Determine number of bombs to spawn (0-2 bombs)
+        const bombsToSpawn = Math.random() < 0.7 ? 1 : (Math.random() < 0.5 ? 2 : 0);
+        
+        if (bombsToSpawn === 0) return;
+        
+        // Get available holes (not occupied by moles or bombs)
+        const availableHoles = [];
+        for (let i = 0; i < 9; i++) {
+            if (!moles[i].isVisible && !bombs[i].isVisible) {
+                availableHoles.push(i);
+            }
+        }
+        
+        // Spawn bombs in random holes
+        for (let i = 0; i < bombsToSpawn && availableHoles.length > 0; i++) {
+            const randomIndex = Math.floor(Math.random() * availableHoles.length);
+            const holeIndex = availableHoles.splice(randomIndex, 1)[0];
+            showBomb(holeIndex);
+        }
+    };
+    
+    // Start bomb spawning after 5 seconds, then every 5 seconds
+    const initialBombTimeout = setTimeout(() => {
+        spawnRandomBombs();
+        bombSpawnTimer = setInterval(spawnRandomBombs, bombSpawnInterval);
+    }, bombSpawnStartTime);
+    
+    bombTimeouts.push(initialBombTimeout);
+}
 
 function createBurstAnimation(holeContainer) {
     const burstDiv = document.createElement('div');
@@ -425,8 +529,57 @@ function handleMoleHit(index) {
     }
 }
 
+function handleBombHit(index) {
+    if (!gameState.isPlaying) return;
+    
+    const holeContainer = document.querySelector(`[data-index="${index}"]`);
+    const bomb = holeContainer.querySelector('.bomb');
+    const hole = holeContainer.querySelector('.hole');
+    
+    // Create explosion animation
+    createExplosionAnimation(holeContainer);
+    
+    // Only trigger game over if there's actually a bomb
+    if (bombs[index].isVisible) {
+        // Play explosion sound
+        playExplosionSound();
+        
+        // Hide bomb and show explosion effect
+        bomb.classList.remove('visible');
+        bomb.classList.add('exploded');
+        hole.className = 'hole explosion-animation';
+        
+        bombs[index].isVisible = false;
+        bombs[index].isHit = true;
+        
+        // Trigger immediate game over
+        setTimeout(() => {
+            endGame();
+        }, 500); // Small delay to show explosion animation
+    }
+}
+
+function createExplosionAnimation(holeContainer) {
+    const explosionDiv = document.createElement('div');
+    explosionDiv.className = 'explosion-animation';
+    explosionDiv.textContent = '💥';
+    
+    holeContainer.appendChild(explosionDiv);
+    
+    setTimeout(() => {
+        if (holeContainer.contains(explosionDiv)) {
+            holeContainer.removeChild(explosionDiv);
+        }
+    }, 500);
+}
+
 function handleHoleClick(index) {
-    handleMoleHit(index);
+    // Check if there's a bomb first (bombs take priority)
+    if (bombs[index].isVisible) {
+        handleBombHit(index);
+    } else {
+        handleMoleHit(index);
+    }
 }
 
 
@@ -457,8 +610,12 @@ function handleKeyDown(event) {
     
     // Simply handle the hit without animation
     
-    // Handle the hit
-    handleMoleHit(holeIndex);
+    // Handle the hit (check for bombs first)
+    if (bombs[holeIndex].isVisible) {
+        handleBombHit(holeIndex);
+    } else {
+        handleMoleHit(holeIndex);
+    }
     
     // Prevent default to avoid browser behavior
     event.preventDefault();
@@ -500,9 +657,10 @@ function endGame() {
     }
     clearAllTimeouts();
     
-    // Hide all moles
+    // Hide all moles and bombs
     for (let i = 0; i < 9; i++) {
         hideMole(i);
+        hideBomb(i);
     }
     
     // Play game over sound
@@ -553,9 +711,16 @@ function startGame() {
         showHitEffect: false
     }));
     
-    // Hide all moles visually
+    // Reset bombs
+    bombs = Array(9).fill(null).map(() => ({
+        isVisible: false,
+        isHit: false
+    }));
+    
+    // Hide all moles and bombs visually
     for (let i = 0; i < 9; i++) {
         hideMole(i);
+        hideBomb(i);
     }
     
     // Update UI
@@ -563,7 +728,7 @@ function startGame() {
     updateTimeDisplay();
     elements.startButton.textContent = '🎮 Playing...';
     elements.startButton.disabled = true;
-    elements.gameStatus.textContent = 'Hit the moles!';
+    elements.gameStatus.textContent = 'Hit the moles! Avoid bombs 💣!';
     
     // Stop ambient sound and start game music
     stopAmbientSound();
@@ -581,6 +746,9 @@ function startGame() {
     
     // Start mole spawning
     spawnMoles();
+    
+    // Start bomb spawning
+    spawnBombs();
 }
 
 function handlePlayAgain() {
