@@ -38,6 +38,7 @@ export default function Game() {
   const moleTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
   const audioContextRef = useRef<AudioContext | null>(null);
   const backgroundMusicRef = useRef<OscillatorNode | null>(null);
+  const ambientSoundRef = useRef<OscillatorNode | null>(null);
   const [isSoundEnabled, setIsSoundEnabled] = useState(true);
 
   const clearAllTimeouts = useCallback(() => {
@@ -187,6 +188,77 @@ export default function Game() {
     }
   }, []);
 
+  const startAmbientSound = useCallback(() => {
+    if (!isSoundEnabled) return;
+    
+    const audioContext = initAudio();
+    
+    // Stop existing ambient sound
+    if (ambientSoundRef.current) {
+      ambientSoundRef.current.stop();
+    }
+    
+    // Create a gentle ambient sound with multiple layers
+    const createAmbientLayer = (frequency: number, volume: number) => {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      const filter = audioContext.createBiquadFilter();
+      
+      oscillator.connect(filter);
+      filter.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+      oscillator.type = 'sine';
+      
+      // Add gentle filtering for a softer sound
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(800, audioContext.currentTime);
+      filter.Q.setValueAtTime(0.5, audioContext.currentTime);
+      
+      gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+      
+      // Add subtle frequency modulation for a more natural sound
+      const lfo = audioContext.createOscillator();
+      const lfoGain = audioContext.createGain();
+      lfo.connect(lfoGain);
+      lfoGain.connect(oscillator.frequency);
+      
+      lfo.frequency.setValueAtTime(0.1, audioContext.currentTime);
+      lfo.type = 'sine';
+      lfoGain.gain.setValueAtTime(10, audioContext.currentTime);
+      
+      oscillator.start(audioContext.currentTime);
+      lfo.start(audioContext.currentTime);
+      
+      return { oscillator, lfo };
+    };
+    
+    // Create multiple layers for a rich ambient sound
+    const layer1 = createAmbientLayer(220, 0.02); // Deep bass
+    const layer2 = createAmbientLayer(440, 0.015); // Mid tone
+    const layer3 = createAmbientLayer(880, 0.01); // High tone
+    
+    // Store reference to stop later
+    ambientSoundRef.current = {
+      stop: () => {
+        layer1.oscillator.stop();
+        layer1.lfo.stop();
+        layer2.oscillator.stop();
+        layer2.lfo.stop();
+        layer3.oscillator.stop();
+        layer3.lfo.stop();
+      }
+    } as any;
+  }, [isSoundEnabled, initAudio]);
+
+  const stopAmbientSound = useCallback(() => {
+    if (ambientSoundRef.current) {
+      ambientSoundRef.current.stop();
+      ambientSoundRef.current = null;
+    }
+  }, []);
+
   const toggleSound = useCallback(() => {
     setIsSoundEnabled(prev => !prev);
   }, []);
@@ -275,8 +347,9 @@ export default function Game() {
     // Play game over sound
     playGameOverSound();
 
-    // Stop background music
+    // Stop background music and restart ambient sound
     stopBackgroundMusic();
+    startAmbientSound();
 
     // Update game state and handle high score
     setGameState(prev => {
@@ -302,7 +375,8 @@ export default function Game() {
       timeLeft: 30,
     }));
 
-    // Start background music
+    // Stop ambient sound and start game music
+    stopAmbientSound();
     startBackgroundMusic();
 
     // Start game timer
@@ -312,7 +386,7 @@ export default function Game() {
         return { ...prev, timeLeft: newTimeLeft };
       });
     }, 1000);
-  }, [startBackgroundMusic]);
+  }, [startBackgroundMusic, stopAmbientSound]);
 
   const handlePlayAgain = useCallback(() => {
     setShowGameOverModal(false);
@@ -341,10 +415,20 @@ export default function Game() {
   useEffect(() => {
     if (!isSoundEnabled) {
       stopBackgroundMusic();
+      stopAmbientSound();
     } else if (gameState.isPlaying) {
       startBackgroundMusic();
+    } else {
+      startAmbientSound();
     }
-  }, [isSoundEnabled, gameState.isPlaying, startBackgroundMusic, stopBackgroundMusic]);
+  }, [isSoundEnabled, gameState.isPlaying, startBackgroundMusic, stopBackgroundMusic, startAmbientSound, stopAmbientSound]);
+
+  // Start ambient sound on mount
+  useEffect(() => {
+    if (!gameState.isPlaying) {
+      startAmbientSound();
+    }
+  }, []);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -354,8 +438,9 @@ export default function Game() {
       }
       clearAllTimeouts();
       stopBackgroundMusic();
+      stopAmbientSound();
     };
-  }, [clearAllTimeouts, stopBackgroundMusic]);
+  }, [clearAllTimeouts, stopBackgroundMusic, stopAmbientSound]);
 
   return (
     <div className="bg-game-bg min-h-screen font-sans">
