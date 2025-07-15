@@ -540,10 +540,10 @@ function teleportCursorToHole(holeIndex) {
         </svg>
     `;
     
-    // Position the cursor at the hole center
+    // Position the cursor at the hole center (adjust for hammer head position)
     tempCursor.style.position = 'fixed';
-    tempCursor.style.left = (centerX - 64) + 'px';
-    tempCursor.style.top = (centerY - 64) + 'px';
+    tempCursor.style.left = (centerX - 95) + 'px';
+    tempCursor.style.top = (centerY - 25) + 'px';
     tempCursor.style.pointerEvents = 'none';
     tempCursor.style.zIndex = '9999';
     
