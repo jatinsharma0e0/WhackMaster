@@ -543,14 +543,11 @@ function teleportCursorToHole(holeIndex) {
     // Add to body
     document.body.appendChild(tempCursor);
     
-    // Remove after animation and restore original cursor
+    // Remove after animation (but don't restore cursor here)
     setTimeout(() => {
         if (document.body.contains(tempCursor)) {
             document.body.removeChild(tempCursor);
         }
-        
-        // Restore original cursors
-        restoreOriginalCursor();
     }, 300);
 }
 
