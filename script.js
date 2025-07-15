@@ -505,6 +505,12 @@ function handleHoleClick(index) {
 function teleportCursorToHole(holeIndex) {
     if (!gameState.isPlaying) return;
     
+    // Hide the original cursor during teleport strike
+    elements.gameBoard.style.cursor = 'none';
+    document.querySelectorAll('.hole').forEach(hole => {
+        hole.style.cursor = 'none';
+    });
+    
     // Get the hole element
     const holeContainer = document.querySelector(`[data-index="${holeIndex}"]`);
     if (!holeContainer) return;
@@ -537,12 +543,25 @@ function teleportCursorToHole(holeIndex) {
     // Add to body
     document.body.appendChild(tempCursor);
     
-    // Remove after animation
+    // Remove after animation and restore original cursor
     setTimeout(() => {
         if (document.body.contains(tempCursor)) {
             document.body.removeChild(tempCursor);
         }
+        
+        // Restore original cursors
+        restoreOriginalCursor();
     }, 300);
+}
+
+function restoreOriginalCursor() {
+    // Restore game board cursor
+    elements.gameBoard.style.cursor = '';
+    
+    // Restore hole cursors
+    document.querySelectorAll('.hole').forEach(hole => {
+        hole.style.cursor = '';
+    });
 }
 
 function handleKeyDown(event) {
@@ -586,6 +605,9 @@ function handleKeyUp(event) {
     
     // Remove key from pressed keys set
     pressedKeys.delete(key);
+    
+    // Ensure cursor is restored when key is released
+    restoreOriginalCursor();
     
     // Prevent default to avoid browser behavior
     event.preventDefault();
