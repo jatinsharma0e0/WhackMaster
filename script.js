@@ -363,39 +363,39 @@ function createHammerAnimation(holeContainer) {
     
     const hammerSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     hammerSvg.className = 'hammer-svg';
-    hammerSvg.setAttribute('width', '60');
-    hammerSvg.setAttribute('height', '60');
-    hammerSvg.setAttribute('viewBox', '0 0 60 60');
+    hammerSvg.setAttribute('width', '128');
+    hammerSvg.setAttribute('height', '128');
+    hammerSvg.setAttribute('viewBox', '0 0 128 128');
     
     // Hammer handle
     const handle = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    handle.setAttribute('x', '24');
-    handle.setAttribute('y', '12');
-    handle.setAttribute('width', '12');
-    handle.setAttribute('height', '36');
+    handle.setAttribute('x', '48');
+    handle.setAttribute('y', '24');
+    handle.setAttribute('width', '32');
+    handle.setAttribute('height', '72');
     handle.setAttribute('fill', '#A0522D');
     handle.setAttribute('stroke', '#654321');
-    handle.setAttribute('stroke-width', '2');
+    handle.setAttribute('stroke-width', '4');
     
     // Hammer head
     const head = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    head.setAttribute('x', '15');
-    head.setAttribute('y', '6');
-    head.setAttribute('width', '30');
-    head.setAttribute('height', '18');
+    head.setAttribute('x', '32');
+    head.setAttribute('y', '12');
+    head.setAttribute('width', '64');
+    head.setAttribute('height', '36');
     head.setAttribute('fill', '#C0C0C0');
     head.setAttribute('stroke', '#808080');
-    head.setAttribute('stroke-width', '2');
-    head.setAttribute('rx', '3');
+    head.setAttribute('stroke-width', '4');
+    head.setAttribute('rx', '6');
     
     // Hammer head highlight
     const highlight = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    highlight.setAttribute('x', '18');
-    highlight.setAttribute('y', '7.5');
-    highlight.setAttribute('width', '24');
-    highlight.setAttribute('height', '15');
+    highlight.setAttribute('x', '36');
+    highlight.setAttribute('y', '15');
+    highlight.setAttribute('width', '56');
+    highlight.setAttribute('height', '30');
     highlight.setAttribute('fill', '#E0E0E0');
-    highlight.setAttribute('rx', '1.5');
+    highlight.setAttribute('rx', '3');
     
     hammerSvg.appendChild(handle);
     hammerSvg.appendChild(head);
@@ -419,39 +419,39 @@ function createGlobalHammerAnimation(x, y) {
     
     const hammerSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     hammerSvg.className = 'hammer-svg';
-    hammerSvg.setAttribute('width', '60');
-    hammerSvg.setAttribute('height', '60');
-    hammerSvg.setAttribute('viewBox', '0 0 60 60');
+    hammerSvg.setAttribute('width', '128');
+    hammerSvg.setAttribute('height', '128');
+    hammerSvg.setAttribute('viewBox', '0 0 128 128');
     
     // Hammer handle
     const handle = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    handle.setAttribute('x', '24');
-    handle.setAttribute('y', '12');
-    handle.setAttribute('width', '12');
-    handle.setAttribute('height', '36');
+    handle.setAttribute('x', '48');
+    handle.setAttribute('y', '24');
+    handle.setAttribute('width', '32');
+    handle.setAttribute('height', '72');
     handle.setAttribute('fill', '#A0522D');
     handle.setAttribute('stroke', '#654321');
-    handle.setAttribute('stroke-width', '2');
+    handle.setAttribute('stroke-width', '4');
     
     // Hammer head
     const head = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    head.setAttribute('x', '15');
-    head.setAttribute('y', '6');
-    head.setAttribute('width', '30');
-    head.setAttribute('height', '18');
+    head.setAttribute('x', '32');
+    head.setAttribute('y', '12');
+    head.setAttribute('width', '64');
+    head.setAttribute('height', '36');
     head.setAttribute('fill', '#C0C0C0');
     head.setAttribute('stroke', '#808080');
-    head.setAttribute('stroke-width', '2');
-    head.setAttribute('rx', '3');
+    head.setAttribute('stroke-width', '4');
+    head.setAttribute('rx', '6');
     
     // Hammer head highlight
     const highlight = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    highlight.setAttribute('x', '18');
-    highlight.setAttribute('y', '7.5');
-    highlight.setAttribute('width', '24');
-    highlight.setAttribute('height', '15');
+    highlight.setAttribute('x', '36');
+    highlight.setAttribute('y', '15');
+    highlight.setAttribute('width', '56');
+    highlight.setAttribute('height', '30');
     highlight.setAttribute('fill', '#E0E0E0');
-    highlight.setAttribute('rx', '1.5');
+    highlight.setAttribute('rx', '3');
     
     hammerSvg.appendChild(handle);
     hammerSvg.appendChild(head);
