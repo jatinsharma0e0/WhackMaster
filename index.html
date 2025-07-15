@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔨 Whack-a-Mole Game 🔨</title>
+    <meta name="description" content="Play the classic Whack-a-Mole game! Hit moles as they pop up and try to beat your high score in 30 seconds. Features cute animations and sound effects.">
+    
+    <!-- Open Graph tags for social sharing -->
+    <meta property="og:title" content="Whack-a-Mole Game">
+    <meta property="og:description" content="Play the classic Whack-a-Mole game with cute animations and sound effects!">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Game Container -->
+    <div class="game-container">
+        <div class="container">
+            <!-- Game Header -->
+            <div class="game-header">
+                <div class="title-row">
+                    <h1 class="game-title">🔨 Whack-a-Mole! 🔨</h1>
+                    <button id="soundToggle" class="sound-toggle" title="Toggle Sound">
+                        🔊
+                    </button>
+                </div>
+                <p class="game-subtitle">Hit the moles as they pop up!</p>
+            </div>
+
+            <!-- Game Stats -->
+            <div class="game-stats">
+                <div class="stat-card score-card">
+                    <div class="stat-label">SCORE</div>
+                    <div class="stat-value" id="currentScore">0</div>
+                </div>
+                <div class="stat-card time-card">
+                    <div class="stat-label">TIME</div>
+                    <div class="stat-value" id="timeLeft">30</div>
+                </div>
+            </div>
+
+            <!-- Game Board -->
+            <div class="game-board" id="gameBoard">
+                <div class="holes-grid">
+                    <!-- 9 holes will be generated here by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Game Controls -->
+            <div class="game-controls">
+                <button id="startButton" class="start-button">
+                    🎮 Start Game
+                </button>
+                <div class="game-status" id="gameStatus">
+                    Click "Start Game" to begin!
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="instructions-card">
+                <h2 class="instructions-title">How to Play</h2>
+                <div class="instructions-grid">
+                    <div class="instruction-item">
+                        <div class="instruction-number">1</div>
+                        <span>Click "Start Game" to begin</span>
+                    </div>
+                    <div class="instruction-item">
+                        <div class="instruction-number">2</div>
+                        <span>Hit moles as they pop up from holes</span>
+                    </div>
+                    <div class="instruction-item">
+                        <div class="instruction-number">3</div>
+                        <span>Each hit scores 10 points</span>
+                    </div>
+                    <div class="instruction-item">
+                        <div class="instruction-number">4</div>
+                        <span>Get the highest score in 30 seconds!</span>
+                    </div>
+                </div>
+
+                <!-- Controls Section -->
+                <div class="controls-section">
+                    <h3 class="controls-title">Controls</h3>
+                    <div class="controls-grid">
+                        <div class="control-item">
+                            <div class="control-icon">🖱️ Mouse</div>
+                            <p>Click on holes to whack moles</p>
+                        </div>
+                        <div class="control-item">
+                            <div class="control-icon">⌨️ Numpad (1-9)</div>
+                            <div class="numpad-grid">
+                                <div class="numpad-key">7</div>
+                                <div class="numpad-key">8</div>
+                                <div class="numpad-key">9</div>
+                                <div class="numpad-key">4</div>
+                                <div class="numpad-key">5</div>
+                                <div class="numpad-key">6</div>
+                                <div class="numpad-key">1</div>
+                                <div class="numpad-key">2</div>
+                                <div class="numpad-key">3</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- High Score Display -->
+            <div class="high-score">
+                🏆 High Score: <span id="highScore">0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="gameOverModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-icon">🎉</div>
+            <h2 class="modal-title">Game Over!</h2>
+            <div class="modal-score">
+                Final Score: <span id="finalScore" class="score-highlight">0</span>
+            </div>
+            <div id="newHighScoreMsg" class="new-high-score" style="display: none;">
+                🏆 New High Score! 🏆
+            </div>
+            <div class="modal-buttons">
+                <button id="playAgainButton" class="modal-button primary">
+                    Play Again
+                </button>
+                <button id="closeModalButton" class="modal-button secondary">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a full-stack web application built with React (frontend) and Express.js (backend) that implements a classic Whack-a-Mole game. The application uses a modern tech stack with TypeScript, Tailwind CSS, and shadcn/ui components for a polished user interface.
+This project has been converted from a React/TypeScript application to a pure HTML5, CSS3, and JavaScript implementation. The game preserves all original features including animations, sound effects, scoring, and responsive design while being completely self-contained and runnable by simply opening index.html in any modern web browser.
 
 ## User Preferences
 
