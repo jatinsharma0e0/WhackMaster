@@ -906,6 +906,27 @@ function endGame() {
 }
 
 function startGame() {
+    // Disable start button immediately
+    elements.startButton.disabled = true;
+    elements.startButton.textContent = '🎮 Starting...';
+    
+    // Start 3-second countdown
+    let countdown = 3;
+    elements.gameStatus.textContent = `Get ready! Starting in ${countdown}...`;
+    
+    const countdownInterval = setInterval(() => {
+        countdown--;
+        if (countdown > 0) {
+            elements.gameStatus.textContent = `Get ready! Starting in ${countdown}...`;
+            playButtonClickSound(); // Sound effect for each countdown number
+        } else {
+            clearInterval(countdownInterval);
+            actuallyStartGame();
+        }
+    }, 1000);
+}
+
+function actuallyStartGame() {
     gameState.isPlaying = true;
     gameState.score = 0;
     gameState.timeLeft = 30;
@@ -936,7 +957,6 @@ function startGame() {
     updateScoreDisplay();
     updateTimeDisplay();
     elements.startButton.textContent = '🎮 Playing...';
-    elements.startButton.disabled = true;
     elements.gameStatus.textContent = 'Hit the moles! Avoid bombs 💣!';
     
     // Stop ambient sound and start game music
