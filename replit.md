@@ -12,6 +12,7 @@ The game runs by simply opening index.html in any modern web browser.
 
 Preferred communication style: Simple, everyday language.
 Visual preferences: Custom hammer icon instead of emoji characters.
+Custom cursor: Custom hammer cursor (hammer-cursor.png) replaces default mouse cursor throughout the game.
 
 ## System Architecture
 
