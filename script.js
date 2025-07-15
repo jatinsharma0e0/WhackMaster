@@ -297,7 +297,7 @@ function showMole(index) {
 function spawnMoles() {
     if (!gameState.isPlaying) return;
     
-    const spawnRandomMole = () => {
+    const spawnRandomMoles = () => {
         if (!gameState.isPlaying) return;
         
         // Hide all current moles
@@ -305,18 +305,48 @@ function spawnMoles() {
             hideMole(i);
         }
         
-        // Show random mole
-        const randomHole = Math.floor(Math.random() * 9);
-        showMole(randomHole);
+        // Determine number of moles to spawn based on time remaining
+        let molesToSpawn = 1;
+        if (gameState.timeLeft > 20) {
+            // First 10 seconds (30-21): 1 mole
+            molesToSpawn = 1;
+        } else if (gameState.timeLeft > 10) {
+            // Middle 10 seconds (20-11): 2 moles
+            molesToSpawn = 2;
+        } else {
+            // Last 10 seconds (10-1): 3-4 moles
+            molesToSpawn = Math.random() < 0.5 ? 3 : 4;
+        }
         
-        // Schedule next mole spawn (500ms to 1500ms)
-        const nextSpawnTime = Math.random() * 1000 + 500;
-        const timeout = setTimeout(spawnRandomMole, nextSpawnTime);
+        // Get available holes and spawn moles
+        const availableHoles = Array.from({length: 9}, (_, i) => i);
+        const selectedHoles = [];
+        
+        for (let i = 0; i < molesToSpawn; i++) {
+            if (availableHoles.length === 0) break;
+            
+            const randomIndex = Math.floor(Math.random() * availableHoles.length);
+            const holeIndex = availableHoles.splice(randomIndex, 1)[0];
+            selectedHoles.push(holeIndex);
+            showMole(holeIndex);
+        }
+        
+        // Schedule next mole spawn - faster spawning as time progresses
+        let nextSpawnTime;
+        if (gameState.timeLeft > 20) {
+            nextSpawnTime = Math.random() * 1000 + 1000; // 1-2 seconds
+        } else if (gameState.timeLeft > 10) {
+            nextSpawnTime = Math.random() * 800 + 700; // 0.7-1.5 seconds
+        } else {
+            nextSpawnTime = Math.random() * 600 + 400; // 0.4-1 second
+        }
+        
+        const timeout = setTimeout(spawnRandomMoles, nextSpawnTime);
         moleTimeouts.push(timeout);
     };
     
     // Start spawning moles after 500ms
-    const initialTimeout = setTimeout(spawnRandomMole, 500);
+    const initialTimeout = setTimeout(spawnRandomMoles, 500);
     moleTimeouts.push(initialTimeout);
 }
 
