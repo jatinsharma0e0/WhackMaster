@@ -608,7 +608,8 @@ function createHammerHitAnimation(holeIndex) {
 }
 
 function hideMouseCursor() {
-    document.body.style.cursor = 'none';
+    // Add class to hide cursor everywhere
+    document.body.classList.add('hide-cursor');
     
     // Clear any existing timeout
     if (cursorHideTimeout) {
@@ -619,7 +620,7 @@ function hideMouseCursor() {
 function showMouseCursor() {
     // Set timeout to show cursor after 500ms
     cursorHideTimeout = setTimeout(() => {
-        document.body.style.cursor = '';
+        document.body.classList.remove('hide-cursor');
     }, 500);
 }
 

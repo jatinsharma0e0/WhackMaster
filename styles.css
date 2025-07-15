@@ -788,6 +788,12 @@ img, svg, canvas, video {
     100% { transform: translateX(0); }
 }
 
+/* Cursor Hiding Styles */
+.hide-cursor,
+.hide-cursor * {
+    cursor: none !important;
+}
+
 /* Hammer Hit Animation Styles */
 .hammer-hit-animation {
     position: absolute;
