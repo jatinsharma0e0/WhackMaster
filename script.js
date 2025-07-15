@@ -677,6 +677,7 @@ function createCursorOverlay() {
 
 function updateOverlayPosition(e) {
     if (cursorOverlay) {
+        // Position cursor overlay to match (0, 0) hotspot
         cursorOverlay.style.left = e.clientX + 'px';
         cursorOverlay.style.top = e.clientY + 'px';
     }
