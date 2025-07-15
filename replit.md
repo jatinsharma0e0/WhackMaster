@@ -64,8 +64,8 @@ Preferred communication style: Simple, everyday language.
 **None** - The application is completely self-contained with zero external dependencies:
 
 - **No npm packages**: No package.json, node_modules, or build tools required
-- **No CDN resources**: All code is contained in three local files
-- **No external APIs**: All sounds generated programmatically using Web Audio API
+- **No CDN resources**: All code is contained in local files
+- **No external APIs**: All sounds are stored as WAV files in the assets/sounds folder
 - **No fonts or assets**: Uses system fonts and emoji characters for graphics
 - **Browser APIs only**: Leverages native HTML5, CSS3, and JavaScript Web APIs
 
@@ -84,10 +84,18 @@ Preferred communication style: Simple, everyday language.
 
 ### File Structure
 ```
-├── index.html     # Complete game interface (5.8KB)
-├── styles.css     # All styling and animations (14KB)  
-├── script.js      # Game logic and audio system (24KB)
-└── README.md      # Documentation
+├── index.html              # Complete game interface (5.8KB)
+├── styles.css              # All styling and animations (14KB)  
+├── script.js               # Game logic and audio system (24KB)
+├── assets/
+│   └── sounds/
+│       ├── hit.wav                # Hit sound effect (9KB)
+│       ├── mole_pop.wav           # Mole pop sound (13KB) 
+│       ├── game_over.wav          # Game over sound sequence (220KB)
+│       ├── background_music.wav   # Energetic gameplay music (265KB)
+│       ├── ambient_music.wav      # Gentle menu music (706KB)
+│       └── generate_audio_files.py # Script to regenerate audio files
+└── README.md               # Documentation
 ```
 
 The application is completely self-contained with no dependencies, making it extremely portable and easy to deploy anywhere static files are supported.

@@ -57,10 +57,18 @@ python3 -m http.server 3000
 ## File Structure
 
 ```
-├── index.html     # Main game page with complete HTML structure
-├── styles.css     # All CSS styles, animations, and responsive design
-├── script.js      # Complete game logic, audio system, and interactions
-└── README.md      # This file
+├── index.html              # Main game page with complete HTML structure
+├── styles.css              # All CSS styles, animations, and responsive design  
+├── script.js               # Complete game logic, audio system, and interactions
+├── assets/
+│   └── sounds/
+│       ├── hit.wav                # Hit sound effect (9KB)
+│       ├── mole_pop.wav           # Mole pop sound (13KB)
+│       ├── game_over.wav          # Game over sound sequence (220KB)
+│       ├── background_music.wav   # Energetic gameplay music (265KB)
+│       ├── ambient_music.wav      # Gentle menu music (706KB)
+│       └── generate_audio_files.py # Script to regenerate audio files
+└── README.md               # This file
 ```
 
 ## Technical Details
@@ -68,7 +76,7 @@ python3 -m http.server 3000
 - **No Dependencies**: Pure HTML5, CSS3, and ES6+ JavaScript
 - **Progressive Enhancement**: Works without JavaScript (basic layout)
 - **Responsive Design**: Optimized for desktop, tablet, and mobile
-- **Web Audio API**: Programmatic sound generation for cross-platform compatibility
+- **Audio Files**: High-quality WAV audio files for all sound effects and music
 - **Local Storage**: High score persistence across browser sessions
 - **Modern Browser Support**: Uses modern JavaScript features for best performance
 

@@ -22,9 +22,9 @@ let moles = Array(9).fill(null).map(() => ({
 let gameInterval = null;
 let moleTimeouts = [];
 let isSoundEnabled = true;
-let audioContext = null;
-let backgroundMusicInterval = null;
-let ambientSoundInterval = null;
+let audioFiles = {};
+let backgroundMusic = null;
+let ambientMusic = null;
 
 // DOM Elements
 let elements = {};
@@ -43,8 +43,8 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeElements();
     createGameBoard();
     initializeEventListeners();
+    loadAudioFiles();
     updateHighScoreDisplay();
-    startAmbientSound();
 });
 
 /**
@@ -117,330 +117,114 @@ function initializeEventListeners() {
  * Audio System Functions
  */
 
-function initAudio() {
-    if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    return audioContext;
+function loadAudioFiles() {
+    const soundFiles = [
+        'hit.wav',
+        'mole_pop.wav', 
+        'game_over.wav',
+        'background_music.wav',
+        'ambient_music.wav'
+    ];
+    
+    soundFiles.forEach(filename => {
+        const audio = new Audio(`assets/sounds/${filename}`);
+        audio.preload = 'auto';
+        audioFiles[filename.replace('.wav', '')] = audio;
+    });
+    
+    // Start ambient music after loading
+    setTimeout(() => {
+        startAmbientSound();
+    }, 500);
 }
 
 function playHitSound() {
-    if (!isSoundEnabled) return;
+    if (!isSoundEnabled || !audioFiles.hit) return;
     
-    const context = initAudio();
-    const oscillator = context.createOscillator();
-    const gainNode = context.createGain();
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(context.destination);
-    
-    oscillator.frequency.setValueAtTime(800, context.currentTime);
-    oscillator.frequency.exponentialRampToValueAtTime(400, context.currentTime + 0.1);
-    
-    gainNode.gain.setValueAtTime(0.3, context.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.1);
-    
-    oscillator.start(context.currentTime);
-    oscillator.stop(context.currentTime + 0.1);
+    try {
+        audioFiles.hit.currentTime = 0;
+        audioFiles.hit.volume = 0.6;
+        audioFiles.hit.play().catch(e => console.log('Hit sound failed:', e));
+    } catch (e) {
+        console.log('Hit sound error:', e);
+    }
 }
 
 function playMolePopSound() {
-    if (!isSoundEnabled) return;
+    if (!isSoundEnabled || !audioFiles.mole_pop) return;
     
-    const context = initAudio();
-    const oscillator = context.createOscillator();
-    const gainNode = context.createGain();
-    const filter = context.createBiquadFilter();
-    
-    oscillator.connect(filter);
-    filter.connect(gainNode);
-    gainNode.connect(context.destination);
-    
-    oscillator.frequency.setValueAtTime(400, context.currentTime);
-    oscillator.frequency.exponentialRampToValueAtTime(800, context.currentTime + 0.03);
-    oscillator.frequency.exponentialRampToValueAtTime(300, context.currentTime + 0.1);
-    oscillator.type = 'triangle';
-    
-    filter.type = 'bandpass';
-    filter.frequency.setValueAtTime(1000, context.currentTime);
-    filter.Q.setValueAtTime(3, context.currentTime);
-    
-    gainNode.gain.setValueAtTime(0.15, context.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.15);
-    
-    oscillator.start(context.currentTime);
-    oscillator.stop(context.currentTime + 0.15);
+    try {
+        audioFiles.mole_pop.currentTime = 0;
+        audioFiles.mole_pop.volume = 0.4;
+        audioFiles.mole_pop.play().catch(e => console.log('Mole pop sound failed:', e));
+    } catch (e) {
+        console.log('Mole pop sound error:', e);
+    }
 }
 
 function playGameOverSound() {
-    if (!isSoundEnabled) return;
+    if (!isSoundEnabled || !audioFiles.game_over) return;
     
-    const context = initAudio();
-    
-    const playGameOverNote = (frequency, startTime, duration) => {
-        const oscillator = context.createOscillator();
-        const gainNode = context.createGain();
-        const filter = context.createBiquadFilter();
-        
-        oscillator.connect(filter);
-        filter.connect(gainNode);
-        gainNode.connect(context.destination);
-        
-        oscillator.frequency.setValueAtTime(frequency, startTime);
-        oscillator.type = 'triangle';
-        
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(frequency * 0.8, startTime);
-        filter.Q.setValueAtTime(2, startTime);
-        
-        gainNode.gain.setValueAtTime(0.1, startTime);
-        gainNode.gain.linearRampToValueAtTime(0.15, startTime + 0.1);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
-        
-        oscillator.start(startTime);
-        oscillator.stop(startTime + duration);
-    };
-    
-    // Classic "wah-wah-wah" descending pattern
-    const gameOverNotes = [
-        { freq: 440, duration: 0.4 }, // A4
-        { freq: 370, duration: 0.4 }, // F#4
-        { freq: 294, duration: 0.8 }, // D4
-    ];
-    
-    let currentTime = context.currentTime;
-    gameOverNotes.forEach((note) => {
-        playGameOverNote(note.freq, currentTime, note.duration);
-        playGameOverNote(note.freq * 1.5, currentTime, note.duration); // Add harmonic
-        currentTime += note.duration + 0.1;
-    });
-    
-    // Add final "thud" sound
-    setTimeout(() => {
-        if (!isSoundEnabled) return;
-        const thudOsc = context.createOscillator();
-        const thudGain = context.createGain();
-        
-        thudOsc.connect(thudGain);
-        thudGain.connect(context.destination);
-        
-        thudOsc.frequency.setValueAtTime(80, context.currentTime);
-        thudOsc.type = 'square';
-        
-        thudGain.gain.setValueAtTime(0.2, context.currentTime);
-        thudGain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.3);
-        
-        thudOsc.start(context.currentTime);
-        thudOsc.stop(context.currentTime + 0.3);
-    }, 1000);
+    try {
+        audioFiles.game_over.currentTime = 0;
+        audioFiles.game_over.volume = 0.5;
+        audioFiles.game_over.play().catch(e => console.log('Game over sound failed:', e));
+    } catch (e) {
+        console.log('Game over sound error:', e);
+    }
 }
 
 function startBackgroundMusic() {
-    if (!isSoundEnabled) return;
+    if (!isSoundEnabled || !audioFiles.background_music) return;
     
     stopBackgroundMusic(); // Stop any existing music
     
-    const context = initAudio();
-    
-    const playGameNote = (frequency, duration, startTime, instrument = 'triangle') => {
-        const oscillator = context.createOscillator();
-        const gainNode = context.createGain();
-        const filter = context.createBiquadFilter();
-        
-        oscillator.connect(filter);
-        filter.connect(gainNode);
-        gainNode.connect(context.destination);
-        
-        oscillator.frequency.setValueAtTime(frequency, startTime);
-        oscillator.type = instrument;
-        
-        filter.type = 'bandpass';
-        filter.frequency.setValueAtTime(frequency * 2, startTime);
-        filter.Q.setValueAtTime(2, startTime);
-        
-        gainNode.gain.setValueAtTime(0, startTime);
-        gainNode.gain.linearRampToValueAtTime(0.08, startTime + 0.05);
-        gainNode.gain.linearRampToValueAtTime(0.08, startTime + duration - 0.05);
-        gainNode.gain.linearRampToValueAtTime(0, startTime + duration);
-        
-        oscillator.start(startTime);
-        oscillator.stop(startTime + duration);
-    };
-    
-    const playPercussion = (startTime) => {
-        const oscillator = context.createOscillator();
-        const gainNode = context.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(context.destination);
-        
-        oscillator.frequency.setValueAtTime(80, startTime);
-        oscillator.type = 'square';
-        
-        gainNode.gain.setValueAtTime(0.15, startTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.1);
-        
-        oscillator.start(startTime);
-        oscillator.stop(startTime + 0.1);
-    };
-    
-    const gameplayMelody = [
-        { freq: 659, duration: 0.2, instrument: 'triangle' }, // E5
-        { freq: 784, duration: 0.2, instrument: 'triangle' }, // G5
-        { freq: 880, duration: 0.2, instrument: 'triangle' }, // A5
-        { freq: 784, duration: 0.2, instrument: 'triangle' }, // G5
-        { freq: 659, duration: 0.4, instrument: 'triangle' }, // E5
-        { freq: 523, duration: 0.2, instrument: 'triangle' }, // C5
-        { freq: 659, duration: 0.4, instrument: 'triangle' }, // E5
-        { freq: 587, duration: 0.2, instrument: 'triangle' }, // D5
-        { freq: 659, duration: 0.2, instrument: 'triangle' }, // E5
-        { freq: 784, duration: 0.2, instrument: 'triangle' }, // G5
-        { freq: 880, duration: 0.4, instrument: 'triangle' }, // A5
-        { freq: 784, duration: 0.4, instrument: 'triangle' }, // G5
-    ];
-    
-    const playGameplayLoop = () => {
-        if (!isSoundEnabled) return;
-        
-        let currentTime = context.currentTime;
-        
-        // Play main melody
-        gameplayMelody.forEach((note, index) => {
-            playGameNote(note.freq, note.duration, currentTime, note.instrument);
-            if (index % 2 === 0) {
-                playPercussion(currentTime);
-            }
-            currentTime += note.duration + 0.05;
-        });
-        
-        // Add bass line
-        const bassNotes = [262, 330, 392, 330]; // C4, E4, G4, E4
-        let bassTime = context.currentTime;
-        bassNotes.forEach(freq => {
-            playGameNote(freq, 0.4, bassTime, 'sawtooth');
-            bassTime += 0.5;
-        });
-    };
-    
-    playGameplayLoop();
-    
-    backgroundMusicInterval = setInterval(() => {
-        if (!isSoundEnabled) {
-            stopBackgroundMusic();
-            return;
-        }
-        playGameplayLoop();
-    }, 3000);
+    try {
+        backgroundMusic = audioFiles.background_music;
+        backgroundMusic.currentTime = 0;
+        backgroundMusic.volume = 0.3;
+        backgroundMusic.loop = true;
+        backgroundMusic.play().catch(e => console.log('Background music failed:', e));
+    } catch (e) {
+        console.log('Background music error:', e);
+    }
 }
 
 function stopBackgroundMusic() {
-    if (backgroundMusicInterval) {
-        clearInterval(backgroundMusicInterval);
-        backgroundMusicInterval = null;
+    if (backgroundMusic) {
+        try {
+            backgroundMusic.pause();
+            backgroundMusic.currentTime = 0;
+        } catch (e) {
+            console.log('Stop background music error:', e);
+        }
     }
 }
 
 function startAmbientSound() {
-    if (!isSoundEnabled) return;
+    if (!isSoundEnabled || !audioFiles.ambient_music) return;
     
     stopAmbientSound(); // Stop any existing ambient sound
     
-    const context = initAudio();
-    
-    const playMenuNote = (frequency, duration, startTime, instrument = 'sine') => {
-        const oscillator = context.createOscillator();
-        const gainNode = context.createGain();
-        const filter = context.createBiquadFilter();
-        
-        oscillator.connect(filter);
-        filter.connect(gainNode);
-        gainNode.connect(context.destination);
-        
-        oscillator.frequency.setValueAtTime(frequency, startTime);
-        oscillator.type = instrument;
-        
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(frequency * 1.5, startTime);
-        filter.Q.setValueAtTime(1, startTime);
-        
-        gainNode.gain.setValueAtTime(0, startTime);
-        gainNode.gain.linearRampToValueAtTime(0.04, startTime + 0.1);
-        gainNode.gain.linearRampToValueAtTime(0.04, startTime + duration - 0.1);
-        gainNode.gain.linearRampToValueAtTime(0, startTime + duration);
-        
-        oscillator.start(startTime);
-        oscillator.stop(startTime + duration);
-    };
-    
-    const playBellNote = (frequency, startTime) => {
-        const oscillator = context.createOscillator();
-        const gainNode = context.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(context.destination);
-        
-        oscillator.frequency.setValueAtTime(frequency, startTime);
-        oscillator.type = 'triangle';
-        
-        gainNode.gain.setValueAtTime(0.02, startTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 2);
-        
-        oscillator.start(startTime);
-        oscillator.stop(startTime + 2);
-    };
-    
-    const menuMelody = [
-        { freq: 523, duration: 0.8 }, // C5
-        { freq: 659, duration: 0.4 }, // E5
-        { freq: 784, duration: 0.4 }, // G5
-        { freq: 659, duration: 0.4 }, // E5
-        { freq: 523, duration: 0.8 }, // C5
-        { freq: 587, duration: 0.6 }, // D5
-        { freq: 659, duration: 0.6 }, // E5
-        { freq: 523, duration: 0.8 }, // C5
-        { freq: 392, duration: 0.4 }, // G4
-        { freq: 440, duration: 0.4 }, // A4
-        { freq: 523, duration: 1.2 }, // C5
-    ];
-    
-    const playMenuLoop = () => {
-        if (!isSoundEnabled) return;
-        
-        let currentTime = context.currentTime;
-        
-        menuMelody.forEach((note, index) => {
-            playMenuNote(note.freq, note.duration, currentTime, 'triangle');
-            
-            if (index % 3 === 0) {
-                playBellNote(note.freq * 2, currentTime);
-            }
-            
-            currentTime += note.duration + 0.1;
-        });
-        
-        // Add soft bass line
-        const bassTimes = [0, 2, 4, 6];
-        bassTimes.forEach((time, index) => {
-            const bassFreq = [131, 165, 196, 147][index]; // C3, E3, G3, D3
-            playMenuNote(bassFreq, 1.5, context.currentTime + time, 'sine');
-        });
-    };
-    
-    playMenuLoop();
-    
-    ambientSoundInterval = setInterval(() => {
-        if (!isSoundEnabled) {
-            stopAmbientSound();
-            return;
-        }
-        playMenuLoop();
-    }, 8000);
+    try {
+        ambientMusic = audioFiles.ambient_music;
+        ambientMusic.currentTime = 0;
+        ambientMusic.volume = 0.2;
+        ambientMusic.loop = true;
+        ambientMusic.play().catch(e => console.log('Ambient music failed:', e));
+    } catch (e) {
+        console.log('Ambient music error:', e);
+    }
 }
 
 function stopAmbientSound() {
-    if (ambientSoundInterval) {
-        clearInterval(ambientSoundInterval);
-        ambientSoundInterval = null;
+    if (ambientMusic) {
+        try {
+            ambientMusic.pause();
+            ambientMusic.currentTime = 0;
+        } catch (e) {
+            console.log('Stop ambient music error:', e);
+        }
     }
 }
 
