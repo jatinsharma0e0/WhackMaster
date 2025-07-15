@@ -45,6 +45,9 @@ let pressedKeys = new Set();
 // Keyboard Animation Variables
 let cursorHideTimeout = null;
 
+// Dynamic Cursor Variables
+let dynamicCursor = null;
+
 
 // DOM Elements
 let elements = {};
@@ -65,6 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeEventListeners();
     loadAudioFiles();
     updateHighScoreDisplay();
+    createDynamicCursor();
 });
 
 /**
@@ -501,9 +505,8 @@ function handleMoleHit(index) {
     const mole = holeContainer.querySelector('.mole');
     const hole = holeContainer.querySelector('.hole');
     
-    // Create burst animation and hammer animation for mouse clicks
+    // Create burst animation only (dynamic cursor handles hammer animation)
     createBurstAnimation(holeContainer);
-    createHammerHitAnimation(index);
     
     // Only score if there's actually a mole
     if (moles[index].isVisible) {
@@ -540,9 +543,8 @@ function handleBombHit(index) {
     const bomb = holeContainer.querySelector('.bomb');
     const hole = holeContainer.querySelector('.hole');
     
-    // Create explosion animation and hammer animation for mouse clicks
+    // Create explosion animation only (dynamic cursor handles hammer animation)
     createExplosionAnimation(holeContainer);
-    createHammerHitAnimation(index);
     
     // Only trigger game over if there's actually a bomb
     if (bombs[index].isVisible) {
@@ -628,6 +630,11 @@ function hideMouseCursor() {
     // Add class to hide cursor everywhere
     document.body.classList.add('hide-cursor');
     
+    // Hide dynamic cursor
+    if (dynamicCursor) {
+        dynamicCursor.style.display = 'none';
+    }
+    
     // Clear any existing timeout
     if (cursorHideTimeout) {
         clearTimeout(cursorHideTimeout);
@@ -638,7 +645,41 @@ function showMouseCursor() {
     // Set timeout to show cursor after 500ms
     cursorHideTimeout = setTimeout(() => {
         document.body.classList.remove('hide-cursor');
+        if (dynamicCursor) {
+            dynamicCursor.style.display = 'block';
+        }
     }, 500);
+}
+
+/**
+ * Dynamic Cursor Functions
+ */
+function createDynamicCursor() {
+    dynamicCursor = document.createElement('div');
+    dynamicCursor.className = 'dynamic-hammer-cursor';
+    document.body.appendChild(dynamicCursor);
+    
+    // Track mouse movement
+    document.addEventListener('mousemove', updateCursorPosition);
+    
+    // Add click animation
+    document.addEventListener('mousedown', animateCursorHit);
+}
+
+function updateCursorPosition(e) {
+    if (dynamicCursor) {
+        dynamicCursor.style.left = e.clientX + 'px';
+        dynamicCursor.style.top = e.clientY + 'px';
+    }
+}
+
+function animateCursorHit() {
+    if (dynamicCursor) {
+        dynamicCursor.classList.add('hitting');
+        setTimeout(() => {
+            dynamicCursor.classList.remove('hitting');
+        }, 400);
+    }
 }
 
 
