@@ -15,6 +15,8 @@ interface MoleState {
   showHitEffect: boolean;
 }
 
+type HoleState = 'empty' | 'mole_active' | 'hit_animation';
+
 export default function Game() {
   const [gameState, setGameState] = useState<GameState>({
     isPlaying: false,
@@ -34,6 +36,7 @@ export default function Game() {
   const [showGameOverModal, setShowGameOverModal] = useState(false);
   const [isNewHighScore, setIsNewHighScore] = useState(false);
   const [hammerAnimations, setHammerAnimations] = useState<boolean[]>(Array(9).fill(false));
+  const [holeStates, setHoleStates] = useState<HoleState[]>(Array(9).fill('empty'));
 
   const gameIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const moleTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
@@ -452,11 +455,19 @@ export default function Game() {
     setMoles(prev => prev.map((mole, i) => 
       i === index ? { ...mole, isVisible: false } : mole
     ));
+    
+    setHoleStates(prev => prev.map((state, i) => 
+      i === index ? 'empty' : state
+    ));
   }, []);
 
   const showMole = useCallback((index: number) => {
     setMoles(prev => prev.map((mole, i) => 
       i === index ? { ...mole, isVisible: true, isHit: false } : mole
+    ));
+    
+    setHoleStates(prev => prev.map((state, i) => 
+      i === index ? 'mole_active' : state
     ));
 
     // Play mole pop sound
@@ -474,8 +485,9 @@ export default function Game() {
     const spawnRandomMole = () => {
       if (!gameState.isPlaying) return;
 
-      // Hide all current moles
+      // Hide all current moles and reset holes to empty
       setMoles(prev => prev.map(mole => ({ ...mole, isVisible: false })));
+      setHoleStates(prev => prev.map(() => 'empty'));
 
       // Show random mole
       const randomHole = Math.floor(Math.random() * 9);
@@ -500,6 +512,11 @@ export default function Game() {
       // Play hit sound
       playHitSound();
 
+      // Set hole state to hit animation
+      setHoleStates(prev => prev.map((state, i) => 
+        i === index ? 'hit_animation' : state
+      ));
+
       // Hide mole immediately and show hit effect
       setMoles(prev => prev.map((mole, i) => 
         i === index 
@@ -510,12 +527,15 @@ export default function Game() {
       // Update score
       setGameState(prev => ({ ...prev, score: prev.score + 10 }));
 
-      // Hide hit effect after 500ms
+      // Hide hit effect after 500ms and reset hole to empty
       setTimeout(() => {
         setMoles(prev => prev.map((mole, i) => 
           i === index 
             ? { ...mole, isHit: false, showHitEffect: false }
             : mole
+        ));
+        setHoleStates(prev => prev.map((state, i) => 
+          i === index ? 'empty' : state
         ));
       }, 500);
     }
@@ -543,8 +563,9 @@ export default function Game() {
     }
     clearAllTimeouts();
 
-    // Hide all moles
+    // Hide all moles and reset holes to empty
     setMoles(prev => prev.map(mole => ({ ...mole, isVisible: false })));
+    setHoleStates(prev => prev.map(() => 'empty'));
 
     // Play game over sound
     playGameOverSound();
@@ -576,6 +597,15 @@ export default function Game() {
       score: 0,
       timeLeft: 30,
     }));
+
+    // Reset all game states
+    setMoles(Array(9).fill(null).map(() => ({
+      isVisible: false,
+      isHit: false,
+      showHitEffect: false,
+    })));
+    setHoleStates(Array(9).fill('empty'));
+    setHammerAnimations(Array(9).fill(false));
 
     // Stop ambient sound and start game music
     stopAmbientSound();
@@ -697,54 +727,64 @@ export default function Game() {
           <div className="grid grid-cols-3 gap-6 max-w-md mx-auto">
             {moles.map((mole, index) => (
               <div key={index} className="relative">
-                <div className="hole w-24 h-24 md:w-32 md:h-32 rounded-full relative overflow-hidden transform transition-transform hover:scale-105">
-                  {/* Mole Element */}
-                  <div 
-                    className={`mole absolute inset-0 flex items-center justify-center transition-transform duration-300 ${
-                      mole.isVisible ? 'translate-y-0 active' : 'translate-y-full'
-                    } ${mole.isHit ? 'hit' : ''}`}
-                    onClick={() => {
-                      triggerHammerAnimation(index);
-                      handleMoleHit(index);
-                    }}
-                  >
-                    <div className="w-16 h-16 md:w-20 md:h-20 bg-game-brown rounded-full border-4 border-yellow-600 flex items-center justify-center shadow-lg">
-                      <div className="text-2xl md:text-3xl">🐹</div>
+                <div 
+                  className="hole w-24 h-24 md:w-32 md:h-32 rounded-full relative overflow-hidden transform transition-transform hover:scale-105"
+                  onClick={() => {
+                    triggerHammerAnimation(index);
+                    handleMoleHit(index);
+                  }}
+                >
+                  {/* Empty Hole State */}
+                  {holeStates[index] === 'empty' && (
+                    <div className="absolute inset-0 bg-black rounded-full border-4 border-yellow-600 shadow-inner"></div>
+                  )}
+
+                  {/* Mole Active State */}
+                  {holeStates[index] === 'mole_active' && mole.isVisible && (
+                    <div className="mole absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-0 active">
+                      <div className="w-16 h-16 md:w-20 md:h-20 bg-game-brown rounded-full border-4 border-yellow-600 flex items-center justify-center shadow-lg">
+                        <div className="text-2xl md:text-3xl">🐹</div>
+                      </div>
                     </div>
-                  </div>
+                  )}
+
+                  {/* Hit Animation State */}
+                  {holeStates[index] === 'hit_animation' && (
+                    <div className="absolute inset-0 bg-black rounded-full border-4 border-yellow-600 shadow-inner"></div>
+                  )}
                 </div>
                 
-                {/* Hit Effect */}
-                <div className={`absolute inset-0 flex items-center justify-center pointer-events-none transition-all duration-300 ${
-                  mole.showHitEffect ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
-                }`}>
-                  <div className="bg-game-red text-white font-bold text-xl rounded-full px-3 py-1 shadow-lg">
-                    +10
+                {/* Hit Effect - Only show during hit animation */}
+                {mole.showHitEffect && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none transition-all duration-300 opacity-100 scale-100">
+                    <div className="bg-game-red text-white font-bold text-xl rounded-full px-3 py-1 shadow-lg">
+                      +10
+                    </div>
                   </div>
-                </div>
+                )}
 
-                {/* Hammer Animation */}
-                <div className={`absolute inset-0 flex items-center justify-center pointer-events-none ${
-                  hammerAnimations[index] ? 'hammer-animation' : ''
-                }`}>
-                  <div className="w-12 h-12 md:w-16 md:h-16 flex items-center justify-center">
-                    <svg width="40" height="40" viewBox="0 0 40 40" className="transform rotate-45">
-                      {/* Hammer handle */}
-                      <rect x="16" y="8" width="8" height="24" fill="#A0522D" stroke="#654321" strokeWidth="1"/>
-                      {/* Hammer head */}
-                      <rect x="10" y="4" width="20" height="12" fill="#C0C0C0" stroke="#808080" strokeWidth="1" rx="2"/>
-                      {/* Hammer head highlight */}
-                      <rect x="12" y="5" width="16" height="10" fill="#E0E0E0" rx="1"/>
-                    </svg>
+                {/* Hammer Animation - Only show when active */}
+                {hammerAnimations[index] && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none hammer-animation">
+                    <div className="w-12 h-12 md:w-16 md:h-16 flex items-center justify-center">
+                      <svg width="40" height="40" viewBox="0 0 40 40" className="transform rotate-45">
+                        {/* Hammer handle */}
+                        <rect x="16" y="8" width="8" height="24" fill="#A0522D" stroke="#654321" strokeWidth="1"/>
+                        {/* Hammer head */}
+                        <rect x="10" y="4" width="20" height="12" fill="#C0C0C0" stroke="#808080" strokeWidth="1" rx="2"/>
+                        {/* Hammer head highlight */}
+                        <rect x="12" y="5" width="16" height="10" fill="#E0E0E0" rx="1"/>
+                      </svg>
+                    </div>
                   </div>
-                </div>
+                )}
 
-                {/* Burst Effect */}
-                <div className={`absolute inset-0 flex items-center justify-center pointer-events-none ${
-                  hammerAnimations[index] ? 'burst-animation' : ''
-                }`}>
-                  <div className="text-3xl md:text-4xl">💥</div>
-                </div>
+                {/* Burst Effect - Only show when hammer animation is active */}
+                {hammerAnimations[index] && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none burst-animation">
+                    <div className="text-3xl md:text-4xl">💥</div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
