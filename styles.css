@@ -160,7 +160,7 @@ img, svg, canvas, video {
     box-shadow: var(--shadow-lg);
     border: 4px solid #d97706;
     margin-bottom: 2rem;
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128' viewBox='0 0 128 128'%3E%3Cg transform='rotate(55 64 64)'%3E%3Crect x='48' y='16' width='32' height='64' fill='%23A0522D' stroke='%23654321' stroke-width='4'/%3E%3Crect x='32' y='8' width='64' height='32' fill='%23C0C0C0' stroke='%23808080' stroke-width='4' rx='8'/%3E%3Crect x='40' y='12' width='48' height='24' fill='%23E0E0E0'/%3E%3C/g%3E%3C/svg%3E") 64 64, auto;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128' viewBox='0 0 128 128'%3E%3Cg transform='rotate(45 64 64)'%3E%3Crect x='48' y='16' width='32' height='64' fill='%23A0522D' stroke='%23654321' stroke-width='4'/%3E%3Crect x='32' y='8' width='64' height='32' fill='%23C0C0C0' stroke='%23808080' stroke-width='4' rx='8'/%3E%3Crect x='40' y='12' width='48' height='24' fill='%23E0E0E0'/%3E%3C/g%3E%3C/svg%3E") 64 64, auto;
     /* Prevent dragging and selection in game area */
     -webkit-user-drag: none;
     -khtml-user-drag: none;
@@ -194,7 +194,7 @@ img, svg, canvas, video {
     position: relative;
     overflow: hidden;
     transition: transform 0.2s;
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128' viewBox='0 0 128 128'%3E%3Cg transform='rotate(55 64 64)'%3E%3Crect x='48' y='16' width='32' height='64' fill='%23A0522D' stroke='%23654321' stroke-width='4'/%3E%3Crect x='32' y='8' width='64' height='32' fill='%23C0C0C0' stroke='%23808080' stroke-width='4' rx='8'/%3E%3Crect x='40' y='12' width='48' height='24' fill='%23E0E0E0'/%3E%3C/g%3E%3C/svg%3E") 64 64, pointer;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128' viewBox='0 0 128 128'%3E%3Cg transform='rotate(45 64 64)'%3E%3Crect x='48' y='16' width='32' height='64' fill='%23A0522D' stroke='%23654321' stroke-width='4'/%3E%3Crect x='32' y='8' width='64' height='32' fill='%23C0C0C0' stroke='%23808080' stroke-width='4' rx='8'/%3E%3Crect x='40' y='12' width='48' height='24' fill='%23E0E0E0'/%3E%3C/g%3E%3C/svg%3E") 64 64, pointer;
     transition: all 0.1s ease;
     background: radial-gradient(circle at center, hsl(215, 28%, 35%) 0%, hsl(215, 28%, 25%) 50%, hsl(215, 28%, 15%) 100%);
     border: 4px solid var(--game-brown);
