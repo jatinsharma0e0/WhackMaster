@@ -13,10 +13,13 @@ body {
     background-color: #f0fff4;
     overflow-x: hidden;
     user-select: none;
-    -webkit-user-select: none; /* Safari */
-    -moz-user-select: none;    /* Firefox */
-    -ms-user-select: none;     /* IE/Edge */
-    cursor: url('assets/hammer-cursor-128.png') 0 0, pointer;
+    -webkit-user-select: none;
+    /* Safari */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* IE/Edge */
+    cursor: url('assets/hammer-cursor-128.png') 50 50, pointer;
 }
 
 /* Custom cursor overlay - always visible, follows mouse */
@@ -30,7 +33,7 @@ body {
     background-position: center;
     pointer-events: none;
     z-index: 10000;
-    transform: translate(-50px, -45px);
+    transform: translate(-40px, -75px);
     opacity: 1;
     transition: transform 0.3s ease-out;
 }
@@ -46,7 +49,10 @@ body.custom-cursor-active * {
 
 
 /* Prevent dragging any images or elements */
-img, svg, canvas, video {
+img,
+svg,
+canvas,
+video {
     -webkit-user-drag: none;
     -khtml-user-drag: none;
     -moz-user-drag: none;
@@ -55,7 +61,9 @@ img, svg, canvas, video {
 }
 
 /* Prevent context menu on right-click in game area */
-.game-board, .hole, .mole {
+.game-board,
+.hole,
+.mole {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -123,8 +131,15 @@ img, svg, canvas, video {
 }
 
 @keyframes hammerBounce {
-    0%, 100% { transform: rotate(-5deg) scale(1); }
-    50% { transform: rotate(5deg) scale(1.1); }
+
+    0%,
+    100% {
+        transform: rotate(-5deg) scale(1);
+    }
+
+    50% {
+        transform: rotate(5deg) scale(1.1);
+    }
 }
 
 .sound-toggle {
@@ -134,7 +149,7 @@ img, svg, canvas, video {
     width: 48px;
     height: 48px;
     font-size: 1.5rem;
-    cursor: url('assets/hammer-cursor-128.png') 0 0, pointer;
+    cursor: url('assets/hammer-cursor-128.png') 50 50, pointer;
     transition: all 0.2s;
     display: flex;
     align-items: center;
@@ -205,7 +220,7 @@ img, svg, canvas, video {
     box-shadow: var(--shadow-lg);
     border: 4px solid #d97706;
     margin-bottom: 2rem;
-    cursor: url('assets/hammer-cursor-128.png') 0 0, pointer;
+    cursor: url('assets/hammer-cursor-128.png') 50 50, pointer;
     /* Prevent dragging and selection in game area */
     -webkit-user-drag: none;
     -khtml-user-drag: none;
@@ -222,14 +237,14 @@ img, svg, canvas, video {
     gap: 1.5rem;
     max-width: 384px;
     margin: 0 auto;
-    cursor: url('assets/hammer-cursor-128.png') 0 0, pointer;
+    cursor: url('assets/hammer-cursor-128.png') 50 50, pointer;
 }
 
 .hole-container {
     position: relative;
     width: 96px;
     height: 96px;
-    cursor: url('assets/hammer-cursor-128.png') 0 0, pointer;
+    cursor: url('assets/hammer-cursor-128.png') 50 50, pointer;
 }
 
 .hole {
@@ -242,7 +257,7 @@ img, svg, canvas, video {
     background: radial-gradient(circle at center, hsl(215, 28%, 35%) 0%, hsl(215, 28%, 25%) 50%, hsl(215, 28%, 15%) 100%);
     border: 4px solid var(--game-brown);
     box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.3);
-    cursor: url('assets/hammer-cursor-128.png') 0 0, pointer;
+    cursor: url('assets/hammer-cursor-128.png') 50 50, pointer;
     /* Prevent dragging holes */
     -webkit-user-drag: none;
     -khtml-user-drag: none;
@@ -281,7 +296,7 @@ img, svg, canvas, video {
     box-shadow: var(--shadow);
     transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
     opacity: 0;
-    cursor: url('assets/hammer-cursor-128.png') 0 0, pointer;
+    cursor: url('assets/hammer-cursor-128.png') 50 50, pointer;
     /* Prevent dragging moles */
     -webkit-user-drag: none;
     -khtml-user-drag: none;
@@ -318,7 +333,7 @@ img, svg, canvas, video {
     box-shadow: var(--shadow);
     transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
     opacity: 0;
-    cursor: url('assets/hammer-cursor-128.png') 0 0, pointer;
+    cursor: url('assets/hammer-cursor-128.png') 50 50, pointer;
     /* Prevent dragging bombs */
     -webkit-user-drag: none;
     -khtml-user-drag: none;
@@ -414,7 +429,7 @@ img, svg, canvas, video {
     padding: 1rem 2rem;
     border: 4px solid #d97706;
     border-radius: 1rem;
-    cursor: url('assets/hammer-cursor-128.png') 0 0, pointer;
+    cursor: url('assets/hammer-cursor-128.png') 50 50, pointer;
     transition: all 0.2s;
     box-shadow: var(--shadow);
 }
@@ -627,7 +642,7 @@ img, svg, canvas, video {
     font-size: 1.125rem;
     padding: 0.75rem 1.5rem;
     border-radius: 1rem;
-    cursor: url('assets/hammer-cursor-128.png') 0 0, pointer;
+    cursor: url('assets/hammer-cursor-128.png') 50 50, pointer;
     transition: all 0.2s;
     box-shadow: var(--shadow);
     border: 4px solid;
@@ -661,51 +676,65 @@ img, svg, canvas, video {
 
 /* Animations */
 @keyframes popUp {
-    0% { 
-        transform: translate(-50%, -50%) translateY(100%) scale(0.8); 
-        opacity: 0; 
+    0% {
+        transform: translate(-50%, -50%) translateY(100%) scale(0.8);
+        opacity: 0;
     }
-    100% { 
-        transform: translate(-50%, -50%) translateY(0) scale(1); 
-        opacity: 1; 
+
+    100% {
+        transform: translate(-50%, -50%) translateY(0) scale(1);
+        opacity: 1;
     }
 }
 
 @keyframes hit {
-    0% { transform: translate(-50%, -50%) scale(1); }
-    50% { transform: translate(-50%, -50%) scale(1.2); }
-    100% { transform: translate(-50%, -50%) scale(1); }
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
 }
 
 @keyframes hitEffect {
-    0% { 
+    0% {
         transform: translate(-50%, -50%) scale(0.5);
         opacity: 1;
     }
-    50% { 
+
+    50% {
         transform: translate(-50%, -50%) scale(1.2);
         opacity: 0.8;
     }
-    100% { 
+
+    100% {
         transform: translate(-50%, -50%) scale(1.5);
         opacity: 0;
     }
 }
 
 @keyframes bounceIn {
-    0% { 
-        transform: scale(0.3); 
-        opacity: 0; 
+    0% {
+        transform: scale(0.3);
+        opacity: 0;
     }
-    50% { 
-        transform: scale(1.05); 
+
+    50% {
+        transform: scale(1.05);
     }
-    70% { 
-        transform: scale(0.9); 
+
+    70% {
+        transform: scale(0.9);
     }
-    100% { 
-        transform: scale(1); 
-        opacity: 1; 
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
     }
 }
 
@@ -714,15 +743,17 @@ img, svg, canvas, video {
 
 
 @keyframes burstEffect {
-    0% { 
+    0% {
         transform: translate(-50%, -50%) scale(0.5);
         opacity: 1;
     }
-    50% { 
+
+    50% {
         transform: translate(-50%, -50%) scale(1.2);
         opacity: 0.8;
     }
-    100% { 
+
+    100% {
         transform: translate(-50%, -50%) scale(1.5);
         opacity: 0;
     }
@@ -733,6 +764,7 @@ img, svg, canvas, video {
         transform: scale(0.8) translateY(-20px);
         opacity: 0;
     }
+
     100% {
         transform: scale(1) translateY(0);
         opacity: 1;
@@ -741,77 +773,117 @@ img, svg, canvas, video {
 
 /* Bomb Animations */
 @keyframes bombPop {
-    0% { 
-        transform: translate(-50%, -50%) translateY(100%) scale(0.8); 
-        opacity: 0; 
+    0% {
+        transform: translate(-50%, -50%) translateY(100%) scale(0.8);
+        opacity: 0;
     }
-    100% { 
-        transform: translate(-50%, -50%) translateY(0) scale(1); 
-        opacity: 1; 
+
+    100% {
+        transform: translate(-50%, -50%) translateY(0) scale(1);
+        opacity: 1;
     }
 }
 
 @keyframes bombPulse {
-    0% { 
-        transform: translate(-50%, -50%) translateY(0) scale(1); 
+    0% {
+        transform: translate(-50%, -50%) translateY(0) scale(1);
         box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.4);
     }
-    50% { 
-        transform: translate(-50%, -50%) translateY(0) scale(1.05); 
+
+    50% {
+        transform: translate(-50%, -50%) translateY(0) scale(1.05);
         box-shadow: 0 0 0 10px rgba(255, 68, 68, 0.1);
     }
-    100% { 
-        transform: translate(-50%, -50%) translateY(0) scale(1); 
+
+    100% {
+        transform: translate(-50%, -50%) translateY(0) scale(1);
         box-shadow: 0 0 0 0 rgba(255, 68, 68, 0);
     }
 }
 
 @keyframes bombExplode {
-    0% { 
-        transform: translate(-50%, -50%) scale(1); 
+    0% {
+        transform: translate(-50%, -50%) scale(1);
         opacity: 1;
     }
-    50% { 
-        transform: translate(-50%, -50%) scale(1.5); 
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.5);
         opacity: 0.8;
     }
-    100% { 
-        transform: translate(-50%, -50%) scale(2); 
+
+    100% {
+        transform: translate(-50%, -50%) scale(2);
         opacity: 0;
     }
 }
 
 @keyframes explosionEffect {
-    0% { 
+    0% {
         transform: translate(-50%, -50%) scale(0.5);
         opacity: 1;
     }
-    25% { 
+
+    25% {
         transform: translate(-50%, -50%) scale(1.2);
         opacity: 0.9;
     }
-    50% { 
+
+    50% {
         transform: translate(-50%, -50%) scale(1.8);
         opacity: 0.7;
     }
-    100% { 
+
+    100% {
         transform: translate(-50%, -50%) scale(2.5);
         opacity: 0;
     }
 }
 
 @keyframes explosionShake {
-    0% { transform: translateX(0); }
-    10% { transform: translateX(-2px); }
-    20% { transform: translateX(2px); }
-    30% { transform: translateX(-2px); }
-    40% { transform: translateX(2px); }
-    50% { transform: translateX(-1px); }
-    60% { transform: translateX(1px); }
-    70% { transform: translateX(-1px); }
-    80% { transform: translateX(1px); }
-    90% { transform: translateX(-1px); }
-    100% { transform: translateX(0); }
+    0% {
+        transform: translateX(0);
+    }
+
+    10% {
+        transform: translateX(-2px);
+    }
+
+    20% {
+        transform: translateX(2px);
+    }
+
+    30% {
+        transform: translateX(-2px);
+    }
+
+    40% {
+        transform: translateX(2px);
+    }
+
+    50% {
+        transform: translateX(-1px);
+    }
+
+    60% {
+        transform: translateX(1px);
+    }
+
+    70% {
+        transform: translateX(-1px);
+    }
+
+    80% {
+        transform: translateX(1px);
+    }
+
+    90% {
+        transform: translateX(-1px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
 }
 
 /* Cursor Hiding Styles */
@@ -841,22 +913,27 @@ img, svg, canvas, video {
         transform: translate(-50%, -80%) scale(0.9) rotate(45deg);
         opacity: 0.9;
     }
+
     15% {
         transform: translate(-50%, -70%) scale(1.0) rotate(30deg);
         opacity: 1;
     }
+
     40% {
         transform: translate(-50%, -40%) scale(1.3) rotate(-15deg);
         opacity: 1;
     }
+
     60% {
         transform: translate(-50%, -35%) scale(1.4) rotate(-25deg);
         opacity: 1;
     }
+
     80% {
         transform: translate(-50%, -45%) scale(1.2) rotate(-10deg);
         opacity: 0.8;
     }
+
     100% {
         transform: translate(-50%, -50%) scale(1) rotate(0deg);
         opacity: 0;
@@ -880,10 +957,12 @@ img, svg, canvas, video {
         transform: translate(-50%, -50%) scale(0.5);
         opacity: 1;
     }
+
     50% {
         transform: translate(-50%, -50%) scale(1.5);
         opacity: 1;
     }
+
     100% {
         transform: translate(-50%, -50%) scale(2);
         opacity: 0;
@@ -895,54 +974,54 @@ img, svg, canvas, video {
     .game-title {
         font-size: 2rem;
     }
-    
+
     .game-stats {
         gap: 1rem;
     }
-    
+
     .stat-card {
         padding: 0.75rem 1rem;
         min-width: 100px;
     }
-    
+
     .stat-value {
         font-size: 1.5rem;
     }
-    
+
     .game-board {
         padding: 1.5rem;
     }
-    
+
     .holes-grid {
         gap: 1rem;
         max-width: 300px;
     }
-    
+
     .hole-container {
         width: 80px;
         height: 80px;
     }
-    
+
     .mole {
         width: 52px;
         height: 52px;
         font-size: 1.5rem;
     }
-    
+
     .controls-grid {
         flex-direction: column;
         gap: 1rem;
     }
-    
+
     .instructions-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .modal-content {
         margin: 0.5rem;
         padding: 1.5rem;
     }
-    
+
     .modal-buttons {
         flex-direction: column;
     }
@@ -952,26 +1031,26 @@ img, svg, canvas, video {
     .game-container {
         padding: 1rem 0.5rem;
     }
-    
+
     .title-row {
         flex-direction: column;
         gap: 0.5rem;
     }
-    
+
     .game-title {
         font-size: 1.75rem;
     }
-    
+
     .holes-grid {
         gap: 0.75rem;
         max-width: 240px;
     }
-    
+
     .hole-container {
         width: 64px;
         height: 64px;
     }
-    
+
     .mole {
         width: 40px;
         height: 40px;
