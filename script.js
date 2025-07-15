@@ -108,7 +108,6 @@ function createGameBoard() {
         const hole = document.createElement('div');
         hole.className = 'hole empty';
         hole.addEventListener('click', () => {
-            playHammerHitSound();
             handleHoleClick(i);
         });
         
@@ -710,6 +709,10 @@ function createCursorOverlay() {
     
     // Add hammer hitting animation on any click anywhere on the page
     document.addEventListener('click', (e) => {
+        // Don't play hammer sound for button clicks (they have their own sound)
+        if (!e.target.matches('button, .button, .sound-toggle, .start-button, .play-again-button, .close-button')) {
+            playHammerHitSound();
+        }
         animateHammerHit(e.clientX, e.clientY);
     });
 }
