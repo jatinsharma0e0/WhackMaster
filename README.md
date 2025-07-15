@@ -1,6 +1,6 @@
 # 🔨 Whack-a-Mole Game 🔨
 
-A fun, classic Whack-a-Mole game built with pure HTML5, CSS3, and JavaScript - no frameworks required!
+A fun, classic Whack-a-Mole game built with pure HTML5, CSS3, and JavaScript - completely self-contained with zero dependencies! Features exciting bomb mechanics, custom hammer animations, and rich audio feedback.
 
 ## Features
 
@@ -11,19 +11,24 @@ A fun, classic Whack-a-Mole game built with pure HTML5, CSS3, and JavaScript - n
 - Score tracking with persistent high scores
 - Instant game over when hitting bombs
 
-✅ **Visual Design**
-- Cute mole animations (pop-up effects)
-- Hammer cursor with click animations
-- Burst effects when hitting moles
-- Responsive design for all devices
-- Grass-textured game board
+✅ **Visual Design & Animations**
+- Custom hammer cursor replaces default mouse cursor
+- Realistic hammer hitting animations for mouse clicks and numpad controls
+- Cute mole pop-up animations with smooth transitions
+- Explosion animations for bomb hits
+- Burst effects and impact animations for successful hits
+- Fully responsive design optimized for all screen sizes
+- Professional game board with visual feedback
 
-✅ **Audio System**
-- Background music during gameplay
-- Ambient sounds on menu screen
-- Hit sound effects when whacking moles
+✅ **Rich Audio System**
+- Upbeat cartoon-style background music during gameplay
+- Gentle ambient music on menu screen
+- Satisfying "ting" sound for successful mole hits
+- Hammer hitting sound for all clicks and numpad interactions
 - Mole pop sounds when they appear
+- Dramatic explosion sound for bombs
 - Game over sound sequence
+- Button click sounds for UI interactions
 - Sound toggle button (🔊/🔇)
 
 ✅ **Controls**
@@ -46,10 +51,12 @@ A fun, classic Whack-a-Mole game built with pure HTML5, CSS3, and JavaScript - n
 5. Try to get the highest score in 30 seconds!
 6. Beat your high score and challenge your friends
 
-### Controls
-- **Mouse**: Click directly on holes
-- **Keyboard**: Use numpad keys 1-9 for quick targeting
-- **Touch**: Fully responsive for mobile devices
+### Controls & Interactions
+- **Mouse**: Click directly on holes with custom hammer cursor
+- **Keyboard**: Use numpad keys 1-9 for precise hole targeting (mapped to grid positions)
+- **Touch**: Fully responsive touch controls for mobile devices
+- **Sound Toggle**: Click the 🔊 button to enable/disable all audio
+- **Visual Feedback**: Every interaction triggers appropriate animations and sounds
 
 ## Running the Game
 
@@ -57,25 +64,33 @@ Simply open `index.html` in any modern web browser - no installation or build pr
 
 For development or local hosting:
 ```bash
-python3 -m http.server 3000
-# Then visit http://localhost:3000
+python3 -m http.server 5000
+# Then visit http://localhost:5000
 ```
 
 ## File Structure
 
 ```
-├── index.html              # Main game page with complete HTML structure
-├── styles.css              # All CSS styles, animations, and responsive design  
-├── script.js               # Complete game logic, audio system, and interactions
+├── index.html                      # Main game page (complete HTML structure)
+├── styles.css                      # All CSS styles, animations, and responsive design  
+├── script.js                       # Complete game logic, audio system, and interactions
 ├── assets/
+│   ├── hammer-cursor.png           # Custom hammer cursor (small size)
+│   ├── hammer-cursor-128.png       # Custom hammer cursor (large size)
+│   ├── hammer-icon.png             # Hammer icon for game title
 │   └── sounds/
-│       ├── hit.wav                # Hit sound effect (9KB)
-│       ├── mole_pop.wav           # Mole pop sound (13KB)
-│       ├── game_over.wav          # Game over sound sequence (220KB)
-│       ├── background_music.wav   # Energetic gameplay music (265KB)
-│       ├── ambient_music.wav      # Gentle menu music (706KB)
-│       └── generate_audio_files.py # Script to regenerate audio files
-└── README.md               # This file
+│       ├── hit.wav                 # Original hit sound effect (9KB)
+│       ├── ting.wav                # Special metallic ting for successful hits (22KB)
+│       ├── mole_pop.wav            # Mole pop sound (13KB)
+│       ├── hammer_hit.wav          # Hammer hitting sound for clicks (13KB)
+│       ├── explosion.wav           # Bomb explosion sound (35KB)
+│       ├── game_over.wav           # Game over sound sequence (220KB)
+│       ├── background_music.wav    # Energetic gameplay music (265KB)
+│       ├── ambient_music.wav       # Upbeat cartoon-style menu music (~2.6MB)
+│       ├── button_click.wav        # Button click sound for UI (7KB)
+│       └── generate_audio_files.py # Python script to regenerate audio files
+├── pyproject.toml                  # Python dependencies for audio generation
+└── README.md                       # Complete project documentation
 ```
 
 ## Technical Details
@@ -95,15 +110,35 @@ python3 -m http.server 3000
 - Edge 15+ ✅
 - Mobile browsers ✅
 
-## Converting from React
+## Audio Generation
+
+All audio files are generated programmatically using Python. To regenerate the audio files:
+
+```bash
+cd assets/sounds
+python3 generate_audio_files.py
+```
+
+This creates high-quality WAV files optimized for web playback without any external dependencies.
+
+## Performance Features
+
+- **Instant Loading**: No build process or bundle loading
+- **Zero Dependencies**: Runs entirely in the browser
+- **Lightweight**: Total project size under 4MB including all audio
+- **Efficient Animations**: CSS-based animations with smooth 60fps performance
+- **Memory Optimized**: Proper cleanup of timeouts and event listeners
+
+## Development History
 
 This game was successfully converted from a React/TypeScript implementation to pure HTML/CSS/JavaScript while preserving 100% of the original functionality:
 
-- All React components → Pure HTML elements
+- All React components → Pure HTML elements with vanilla JavaScript
 - React state management → JavaScript variables and DOM manipulation
-- JSX → Standard HTML
-- TypeScript → Modern JavaScript (ES6+)
-- Tailwind CSS → Custom CSS with same visual design
-- React hooks → Standard event listeners and timers
+- JSX → Standard HTML with dynamic content generation
+- TypeScript → Modern JavaScript (ES6+) with proper error handling
+- Tailwind CSS → Custom CSS with identical visual design
+- React hooks → Standard event listeners and game timers
+- Build tools → Direct browser execution
 
-The conversion maintains identical gameplay, visuals, audio, and user experience while removing all build tools and dependencies.
+The conversion maintains identical gameplay, visuals, audio, and user experience while eliminating all build tools and external dependencies.

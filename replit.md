@@ -1,8 +1,8 @@
-# Whack-a-Mole Game
+# Whack-a-Mole Game - Repository Guide
 
 ## Overview
 
-This is a classic Whack-a-Mole game built with pure HTML5, CSS3, and JavaScript - no frameworks required. The game features a 3x3 grid of holes where moles randomly appear, and players must click on them to score points within a 30-second time limit. The game includes bombs that end the game instantly when hit, adding an extra challenge element.
+This is a classic Whack-a-Mole arcade game built with pure HTML5, CSS3, and JavaScript. It's a completely self-contained web application with zero external dependencies, featuring a 3x3 grid where players hit moles that randomly pop up while avoiding bombs. The game includes rich audio effects, custom animations, and persistent high score tracking.
 
 ## User Preferences
 
@@ -11,91 +11,80 @@ Preferred communication style: Simple, everyday language.
 ## System Architecture
 
 ### Frontend Architecture
-- **Pure Vanilla JavaScript**: No frameworks or libraries used, ensuring lightweight and fast performance
-- **Single Page Application (SPA)**: All game logic contained within a single HTML file with linked CSS and JavaScript
-- **Event-Driven Architecture**: Game state changes are handled through event listeners and callback functions
-- **Modular Code Structure**: JavaScript is organized into logical sections with clear separation of concerns
-
-### Technology Stack
-- **HTML5**: Semantic markup for game structure
-- **CSS3**: Styling with animations, transitions, and responsive design
-- **JavaScript ES6+**: Modern JavaScript features for game logic
-- **Web Audio API**: For generating sound effects (with fallback to pre-generated WAV files)
-- **LocalStorage**: For persistent high score storage
-
-## Key Components
-
-### Game State Management
-- **Global Game State**: Centralized state object tracking score, time, and game status
-- **Mole States**: Array of objects tracking each hole's mole visibility and hit status
-- **Bomb States**: Separate array managing bomb spawning and visibility
-- **Timer System**: Countdown timer with interval-based updates
-
-### Audio System
-- **Dynamic Sound Generation**: Web Audio API for creating sound effects programmatically
-- **Fallback Audio Files**: Pre-generated WAV files for browsers without Web Audio support
-- **Background Music**: Ambient sounds for menu and gameplay
-- **Sound Toggle**: User-controllable audio on/off functionality
-
-### Input Handling
-- **Mouse Input**: Click detection on game holes
-- **Keyboard Input**: Numpad keys 1-9 for hole selection
-- **Touch Input**: Mobile-responsive touch events
-- **Custom Cursor**: Hammer-themed cursor with click animations
-
-### Visual Effects
-- **CSS Animations**: Smooth transitions for mole pop-ups and hit effects
-- **Burst Effects**: Visual feedback when hitting moles
-- **Responsive Design**: Adapts to different screen sizes
-- **Game Board**: Grass-textured 3x3 grid layout
-
-## Data Flow
-
-1. **Game Initialization**: Load high scores from localStorage, initialize game state
-2. **Game Start**: Begin countdown timer, start mole spawning logic
-3. **Mole Management**: Random mole spawning with visibility timers
-4. **Bomb Management**: Delayed bomb spawning after 5 seconds of gameplay
-5. **Input Processing**: Handle user clicks/touches on holes
-6. **Score Updates**: Increment score and update display
-7. **Game End**: Stop timers, show game over modal, save high score
-
-## External Dependencies
-
-### Audio Files
-- **Generated Audio**: Python script (`generate_audio_files.py`) creates WAV files
-- **Asset Dependencies**: Hammer cursor images and sound files in `/assets/` directory
-- **Web Audio API**: Browser-native audio generation (primary method)
-
-### Storage
-- **LocalStorage**: Browser-native storage for high scores
-- **No Server Required**: Fully client-side application
-
-## Deployment Strategy
-
-### Static Hosting
-- **No Build Process**: Pure HTML/CSS/JS files can be served directly
-- **Asset Management**: All assets contained in `/assets/` directory
-- **Cross-Browser Compatibility**: Uses standard web APIs with fallbacks
+- **Pure Vanilla JavaScript**: No frameworks or libraries used - everything is built with native web technologies
+- **Single Page Application**: All game logic contained in one HTML page with linked CSS and JavaScript files
+- **Component-based Structure**: Game elements (moles, bombs, UI) are managed as JavaScript objects with state tracking
+- **Event-driven Programming**: User interactions (mouse clicks, keyboard input, touch) drive game state changes
 
 ### File Structure
 ```
 /
-├── index.html          # Main game file
-├── styles.css          # Game styling
-├── script.js          # Game logic
+├── index.html          # Main game page and HTML structure
+├── styles.css          # All styling and animations
+├── script.js           # Complete game logic and state management
+├── README.md           # Project documentation
 └── assets/
-    ├── sounds/         # Audio files
-    └── images/         # Game graphics
+    └── sounds/         # Audio file generation scripts
 ```
 
-### Performance Considerations
-- **Lightweight**: No external libraries or frameworks
-- **Efficient Animations**: CSS transforms and transitions
-- **Memory Management**: Proper cleanup of timers and event listeners
-- **Mobile Optimization**: Touch-friendly interface and responsive design
+## Key Components
 
-### Browser Requirements
-- **Modern Browsers**: ES6+ support required
-- **Audio Support**: Web Audio API preferred, fallback to HTML5 audio
-- **LocalStorage**: For high score persistence
-- **Canvas/CSS3**: For visual effects and animations
+### Game State Management
+- **Central Game State**: Single `gameState` object tracks score, time, playing status, and high score
+- **Mole State Arrays**: Separate arrays track visibility, hit status, and effects for each of the 9 holes
+- **Bomb State Arrays**: Similar state tracking for bomb entities with explosion effects
+- **Local Storage**: High scores persist between sessions using browser localStorage
+
+### Audio System
+- **Dynamic Audio Generation**: Uses Web Audio API to create sound effects programmatically
+- **Background Music**: Separate ambient and gameplay music tracks
+- **Sound Effects**: Individual sounds for hits, misses, explosions, and UI interactions
+- **Audio Toggle**: Users can mute/unmute all audio with a single button
+
+### Visual Effects and Animations
+- **Custom Cursor**: Hammer-themed cursor replaces default mouse pointer
+- **CSS Animations**: Smooth transitions for mole pop-ups, explosions, and hit effects
+- **Responsive Design**: Scales properly across desktop, tablet, and mobile devices
+- **Visual Feedback**: Immediate visual response to all user actions
+
+### Input Handling
+- **Multi-input Support**: Mouse clicks, keyboard (numpad 1-9), and touch events
+- **Coordinate Mapping**: Maps numpad keys to corresponding grid positions
+- **Animation Coordination**: Input triggers both game logic and visual effects simultaneously
+
+## Data Flow
+
+1. **Game Initialization**: Load high score from localStorage, set up event listeners, create audio context
+2. **Game Start**: 3-second countdown → activate mole spawning → start timer countdown
+3. **Mole Spawning**: Random intervals create moles in random holes with auto-hide timers
+4. **Bomb Introduction**: After 5 seconds, bombs start spawning alongside moles
+5. **User Input**: Click/tap/keypress → check hit target → update score → trigger effects
+6. **Game End**: Timer reaches zero OR bomb hit → show final score → update high score → reset state
+
+## External Dependencies
+
+**Zero External Dependencies**: The entire application runs without any third-party libraries, frameworks, or external services. All functionality is implemented using:
+- Native HTML5 features
+- CSS3 animations and transitions
+- Vanilla JavaScript ES6+
+- Web Audio API for sound generation
+- localStorage for data persistence
+
+## Deployment Strategy
+
+### Hosting Requirements
+- **Static Web Hosting**: Can be deployed on any static file server (GitHub Pages, Netlify, Vercel, etc.)
+- **No Server Required**: Pure client-side application with no backend dependencies
+- **No Build Process**: Files can be served directly without compilation or bundling
+
+### Browser Compatibility
+- **Modern Browsers**: Requires ES6+ support and Web Audio API
+- **Mobile Friendly**: Responsive design works on phones and tablets
+- **Progressive Enhancement**: Game degrades gracefully if audio features aren't supported
+
+### Performance Considerations
+- **Lightweight**: Minimal file sizes with no external resources to load
+- **Efficient Animations**: Uses CSS transforms and transitions for smooth performance
+- **Memory Management**: Properly cleans up timers and audio contexts to prevent leaks
+
+The architecture prioritizes simplicity, performance, and broad compatibility while delivering a rich gaming experience through clever use of native web technologies.
