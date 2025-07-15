@@ -188,7 +188,8 @@ function loadAudioFiles() {
         'ambient_music.wav',
         'explosion.wav',
         'hammer_hit.wav',
-        'button_click.wav'
+        'button_click.wav',
+        'ting.wav'
     ];
     
     soundFiles.forEach(filename => {
@@ -326,6 +327,18 @@ function playButtonClickSound() {
         audioFiles.button_click.play().catch(e => console.log('Button click sound failed:', e));
     } catch (e) {
         console.log('Button click sound error:', e);
+    }
+}
+
+function playTingSound() {
+    if (!isSoundEnabled || !audioFiles.ting) return;
+    
+    try {
+        audioFiles.ting.currentTime = 0;
+        audioFiles.ting.volume = 0.6;
+        audioFiles.ting.play().catch(e => console.log('Ting sound failed:', e));
+    } catch (e) {
+        console.log('Ting sound error:', e);
     }
 }
 
@@ -553,6 +566,7 @@ function handleMoleHit(index) {
     // Only score if there's actually a mole
     if (moles[index].isVisible) {
         playHitSound();
+        playTingSound(); // Play special ting sound for successful mole hits
         
         // Hide mole and show hit effect
         mole.classList.remove('visible');
