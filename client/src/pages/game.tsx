@@ -107,9 +107,7 @@ export default function Game() {
   }, [gameState.isPlaying, moles]);
 
   const endGame = useCallback(() => {
-    setGameState(prev => ({ ...prev, isPlaying: false }));
-    
-    // Clear all intervals and timeouts
+    // Clear all intervals and timeouts first
     if (gameIntervalRef.current) {
       clearInterval(gameIntervalRef.current);
       gameIntervalRef.current = null;
@@ -119,19 +117,21 @@ export default function Game() {
     // Hide all moles
     setMoles(prev => prev.map(mole => ({ ...mole, isVisible: false })));
 
-    // Check for new high score
-    const newHighScore = gameState.score > gameState.highScore;
-    if (newHighScore) {
-      const newHigh = gameState.score;
-      setGameState(prev => ({ ...prev, highScore: newHigh }));
-      localStorage.setItem('whackMoleHighScore', newHigh.toString());
-      setIsNewHighScore(true);
-    } else {
-      setIsNewHighScore(false);
-    }
+    // Update game state and handle high score
+    setGameState(prev => {
+      const newHighScore = prev.score > prev.highScore;
+      if (newHighScore) {
+        localStorage.setItem('whackMoleHighScore', prev.score.toString());
+        setIsNewHighScore(true);
+        return { ...prev, isPlaying: false, highScore: prev.score };
+      } else {
+        setIsNewHighScore(false);
+        return { ...prev, isPlaying: false };
+      }
+    });
 
     setShowGameOverModal(true);
-  }, [gameState.score, gameState.highScore, clearAllTimeouts]);
+  }, [clearAllTimeouts]);
 
   const startGame = useCallback(() => {
     setGameState(prev => ({
@@ -144,10 +144,8 @@ export default function Game() {
     // Start game timer
     gameIntervalRef.current = setInterval(() => {
       setGameState(prev => {
-        if (prev.timeLeft <= 1) {
-          return prev; // endGame will be called by useEffect
-        }
-        return { ...prev, timeLeft: prev.timeLeft - 1 };
+        const newTimeLeft = prev.timeLeft - 1;
+        return { ...prev, timeLeft: newTimeLeft };
       });
     }, 1000);
   }, []);
