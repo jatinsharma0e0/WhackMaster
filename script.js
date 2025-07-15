@@ -606,8 +606,10 @@ function handleKeyUp(event) {
     // Remove key from pressed keys set
     pressedKeys.delete(key);
     
-    // Ensure cursor is restored when key is released
-    restoreOriginalCursor();
+    // Restore cursor after 2 seconds delay
+    setTimeout(() => {
+        restoreOriginalCursor();
+    }, 2000);
     
     // Prevent default to avoid browser behavior
     event.preventDefault();
