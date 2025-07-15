@@ -15,7 +15,7 @@ Visual preferences: Custom hammer icon instead of emoji characters.
 Custom cursor: Custom hammer cursor (hammer-cursor.png) replaces default mouse cursor throughout the game with hotspot positioned at (0, 0) and cursor overlay offset by (-50px, -45px).
 Cursor animation: Uses the exact same hammer hitting animation as numpad controls on any click anywhere on the page. The hammer appears at click position, performs the full hitting motion with rotation and scaling effects, and shows an impact explosion, creating a consistent hitting experience across the entire canvas.
 Hammer animations: Realistic hammer hitting animations for both numpad controls (keys 1-9) and mouse clicks anywhere on the page, with rotation effects and impact explosions. All interactions now use the same consistent hammer animation system.
-Audio feedback: Hammer hitting sound plays for all clicks and numpad key presses, button click sound plays for UI button interactions.
+Audio feedback: Hammer hitting sound plays for all clicks and numpad key presses, button click sound plays for UI button interactions. Upbeat cartoon-style background music with xylophone, pizzicato strings, brass accents, and light percussion creates an energetic 120 BPM soundtrack with subtle cartoon flourishes like slide whistles.
 
 ## System Architecture
 
@@ -105,7 +105,7 @@ Audio feedback: Hammer hitting sound plays for all clicks and numpad key presses
 │       ├── mole_pop.wav           # Mole pop sound (13KB) 
 │       ├── game_over.wav          # Game over sound sequence (220KB)
 │       ├── background_music.wav   # Energetic gameplay music (265KB)
-│       ├── ambient_music.wav      # Gentle menu music (706KB)
+│       ├── ambient_music.wav      # Upbeat cartoon-style background music (1 minute loop, ~2.6MB)
 │       ├── explosion.wav          # Bomb explosion sound effect (35KB)
 │       ├── hammer_hit.wav         # Hammer hitting sound for clicks and numpad (13KB)
 │       ├── button_click.wav       # Button click sound for UI interactions (7KB)

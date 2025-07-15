@@ -188,82 +188,195 @@ def generate_background_music():
     write_wav('background_music.wav', sound)
 
 def generate_ambient_sound():
-    """Generate cheerful menu ambient music - clean version without buzzing"""
+    """Generate cheerful, upbeat cartoon-style background music for Whack-a-Mole"""
     sample_rate = 44100
-    loop_duration = 8.0  # 8 second loop
+    loop_duration = 60.0  # 1 minute loop at ~120 BPM
     t = np.linspace(0, loop_duration, int(sample_rate * loop_duration))
     
-    # Gentle melody with wider spacing to prevent frequency interference
-    melody = [
-        {'freq': 523, 'start': 0.0, 'duration': 0.8},   # C5
-        {'freq': 659, 'start': 1.0, 'duration': 0.4},   # E5
-        {'freq': 784, 'start': 1.6, 'duration': 0.4},   # G5
-        {'freq': 659, 'start': 2.2, 'duration': 0.4},   # E5
-        {'freq': 523, 'start': 2.8, 'duration': 0.8},   # C5
-        {'freq': 587, 'start': 3.8, 'duration': 0.6},   # D5
-        {'freq': 659, 'start': 4.6, 'duration': 0.6},   # E5
-        {'freq': 523, 'start': 5.4, 'duration': 0.8},   # C5
-        {'freq': 440, 'start': 6.4, 'duration': 0.4},   # A4
-        {'freq': 523, 'start': 7.0, 'duration': 0.8},   # C5
-    ]
+    # Bouncy 120 BPM timing (0.5s per beat)
+    beat_duration = 0.5
+    
+    # Xylophone-style melody (bright, metallic timbre)
+    def xylophone_sound(freq, t_note, duration):
+        # Bright attack with harmonics
+        fundamental = np.sin(2 * np.pi * freq * t_note)
+        harmonic2 = np.sin(2 * np.pi * freq * 2 * t_note) * 0.4
+        harmonic3 = np.sin(2 * np.pi * freq * 3 * t_note) * 0.2
+        
+        sound = fundamental + harmonic2 + harmonic3
+        
+        # Quick attack, long sustain with decay
+        envelope = np.exp(-t_note / (duration * 0.8))
+        return sound * envelope * 0.06
+    
+    # Pizzicato strings effect
+    def pizzicato_sound(freq, t_note, duration):
+        # Plucked string simulation
+        fundamental = np.sin(2 * np.pi * freq * t_note)
+        # Add slight tremolo
+        tremolo = 1 + 0.15 * np.sin(2 * np.pi * 6 * t_note)
+        sound = fundamental * tremolo
+        
+        # Sharp attack, quick decay
+        envelope = np.exp(-t_note / (duration * 0.3))
+        return sound * envelope * 0.04
+    
+    # Quirky brass sound
+    def brass_sound(freq, t_note, duration):
+        # Square-ish wave for brass character
+        fundamental = np.sin(2 * np.pi * freq * t_note)
+        # Add odd harmonics for brass timbre
+        harmonic3 = np.sin(2 * np.pi * freq * 3 * t_note) * 0.3
+        harmonic5 = np.sin(2 * np.pi * freq * 5 * t_note) * 0.15
+        
+        sound = fundamental + harmonic3 + harmonic5
+        
+        # Moderate attack and sustain
+        envelope = np.ones_like(t_note)
+        fade_samples = len(envelope) // 10
+        if len(envelope) > fade_samples * 2:
+            envelope[:fade_samples] = np.linspace(0, 1, fade_samples)
+            envelope[-fade_samples:] = np.linspace(1, 0, fade_samples)
+        
+        return sound * envelope * 0.035
     
     sound = np.zeros_like(t)
     
-    # Add melody with pure sine waves and smooth envelopes
-    for note in melody:
-        start_sample = int(note['start'] * sample_rate)
-        end_sample = int((note['start'] + note['duration']) * sample_rate)
+    # Main melody pattern (4 measures, repeats throughout)
+    melody_pattern = [
+        # Measure 1
+        {'freq': 523, 'start': 0.0, 'duration': 0.25, 'instrument': 'xylophone'},   # C5
+        {'freq': 659, 'start': 0.25, 'duration': 0.25, 'instrument': 'xylophone'},  # E5
+        {'freq': 784, 'start': 0.5, 'duration': 0.5, 'instrument': 'xylophone'},    # G5
+        {'freq': 659, 'start': 1.0, 'duration': 0.25, 'instrument': 'xylophone'},   # E5
+        {'freq': 523, 'start': 1.25, 'duration': 0.25, 'instrument': 'xylophone'},  # C5
+        {'freq': 587, 'start': 1.5, 'duration': 0.5, 'instrument': 'xylophone'},    # D5
         
-        if end_sample <= len(sound):
-            note_t = t[start_sample:end_sample] - note['start']
-            
-            if len(note_t) > 0:
-                # Pure sine wave for clean sound
-                note_sound = np.sin(2 * np.pi * note['freq'] * note_t)
-                
-                # Smooth envelope to prevent clicks and pops
-                envelope = np.ones_like(note_t) * 0.03
-                fade_samples = min(len(envelope) // 8, 2000)  # Smooth fade
-                if len(envelope) > fade_samples * 2:
-                    envelope[:fade_samples] = np.linspace(0, 0.03, fade_samples)
-                    envelope[-fade_samples:] = np.linspace(0.03, 0, fade_samples)
-                
-                note_sound = note_sound * envelope
-                sound[start_sample:end_sample] += note_sound
+        # Measure 2
+        {'freq': 659, 'start': 2.0, 'duration': 0.5, 'instrument': 'xylophone'},    # E5
+        {'freq': 784, 'start': 2.5, 'duration': 0.25, 'instrument': 'xylophone'},   # G5
+        {'freq': 880, 'start': 2.75, 'duration': 0.25, 'instrument': 'xylophone'},  # A5
+        {'freq': 784, 'start': 3.0, 'duration': 0.25, 'instrument': 'xylophone'},   # G5
+        {'freq': 659, 'start': 3.25, 'duration': 0.25, 'instrument': 'xylophone'},  # E5
+        {'freq': 523, 'start': 3.5, 'duration': 0.5, 'instrument': 'xylophone'},    # C5
+    ]
     
-    # Add very soft bass - reduced amplitude and simplified timing
-    bass_times = [0, 4]  # Only two bass notes to reduce complexity
-    bass_freqs = [131, 147]  # C3, D3
+    # Pizzicato accompaniment pattern
+    pizzicato_pattern = [
+        {'freq': 262, 'start': 0.0, 'duration': 0.25},   # C4
+        {'freq': 330, 'start': 1.0, 'duration': 0.25},   # E4
+        {'freq': 262, 'start': 2.0, 'duration': 0.25},   # C4
+        {'freq': 294, 'start': 3.0, 'duration': 0.25},   # D4
+    ]
     
-    for i, start_time in enumerate(bass_times):
-        freq = bass_freqs[i]
-        start_sample = int(start_time * sample_rate)
-        duration = 3.5  # Longer, overlapping bass notes
-        end_sample = int((start_time + duration) * sample_rate)
+    # Brass accents
+    brass_pattern = [
+        {'freq': 523, 'start': 1.75, 'duration': 0.25},  # C5 accent
+        {'freq': 659, 'start': 3.75, 'duration': 0.25},  # E5 accent
+    ]
+    
+    # Generate the full track by repeating patterns
+    pattern_length = 4.0  # 4 seconds per pattern
+    num_patterns = int(loop_duration / pattern_length)
+    
+    for pattern_num in range(num_patterns):
+        pattern_offset = pattern_num * pattern_length
         
-        if end_sample <= len(sound):
-            bass_t = t[start_sample:end_sample] - start_time
-            # Very low amplitude bass to avoid interference
-            bass_sound = np.sin(2 * np.pi * freq * bass_t) * 0.015
-            
-            # Smooth bass envelope
-            bass_envelope = np.ones_like(bass_t)
-            fade_samples = len(bass_t) // 4
-            if len(bass_envelope) > fade_samples * 2:
-                bass_envelope[:fade_samples] = np.linspace(0, 1, fade_samples)
-                bass_envelope[-fade_samples:] = np.linspace(1, 0, fade_samples)
-            
-            bass_sound = bass_sound * bass_envelope
-            sound[start_sample:end_sample] += bass_sound
+        # Add melody
+        for note in melody_pattern:
+            start_time = note['start'] + pattern_offset
+            if start_time < loop_duration:
+                start_sample = int(start_time * sample_rate)
+                duration = note['duration']
+                end_sample = int((start_time + duration) * sample_rate)
+                
+                if end_sample <= len(sound):
+                    note_t = t[start_sample:end_sample] - start_time
+                    if len(note_t) > 0:
+                        note_sound = xylophone_sound(note['freq'], note_t, duration)
+                        sound[start_sample:end_sample] += note_sound
+        
+        # Add pizzicato every other pattern for variety
+        if pattern_num % 2 == 0:
+            for note in pizzicato_pattern:
+                start_time = note['start'] + pattern_offset
+                if start_time < loop_duration:
+                    start_sample = int(start_time * sample_rate)
+                    duration = note['duration']
+                    end_sample = int((start_time + duration) * sample_rate)
+                    
+                    if end_sample <= len(sound):
+                        note_t = t[start_sample:end_sample] - start_time
+                        if len(note_t) > 0:
+                            note_sound = pizzicato_sound(note['freq'], note_t, duration)
+                            sound[start_sample:end_sample] += note_sound
+        
+        # Add brass accents occasionally
+        if pattern_num % 4 == 2:  # Every 4th pattern
+            for note in brass_pattern:
+                start_time = note['start'] + pattern_offset
+                if start_time < loop_duration:
+                    start_sample = int(start_time * sample_rate)
+                    duration = note['duration']
+                    end_sample = int((start_time + duration) * sample_rate)
+                    
+                    if end_sample <= len(sound):
+                        note_t = t[start_sample:end_sample] - start_time
+                        if len(note_t) > 0:
+                            note_sound = brass_sound(note['freq'], note_t, duration)
+                            sound[start_sample:end_sample] += note_sound
     
-    # Remove bell accompaniment to eliminate potential frequency conflicts
-    # Keep it simple and clean
+    # Add light percussion (kick on beats 1 and 3, snare on beats 2 and 4)
+    for beat in range(int(loop_duration / beat_duration)):
+        beat_time = beat * beat_duration
+        start_sample = int(beat_time * sample_rate)
+        
+        if beat % 4 in [0, 2]:  # Kick drum
+            kick_duration = 0.1
+            end_sample = int((beat_time + kick_duration) * sample_rate)
+            if end_sample <= len(sound):
+                kick_t = t[start_sample:end_sample] - beat_time
+                kick_sound = np.sin(2 * np.pi * 60 * kick_t) * np.exp(-kick_t / 0.05) * 0.03
+                sound[start_sample:end_sample] += kick_sound
+        
+        elif beat % 4 in [1, 3]:  # Snare drum
+            snare_duration = 0.05
+            end_sample = int((beat_time + snare_duration) * sample_rate)
+            if end_sample <= len(sound):
+                snare_t = t[start_sample:end_sample] - beat_time
+                # White noise for snare
+                noise = np.random.random(len(snare_t)) * 2 - 1
+                snare_envelope = np.exp(-snare_t / 0.02)
+                snare_sound = noise * snare_envelope * 0.02
+                sound[start_sample:end_sample] += snare_sound
     
-    # Apply gentle low-pass filtering effect by reducing high frequency content
-    # Normalize to prevent clipping
+    # Add occasional cartoon flourishes (slide whistle every 16 seconds)
+    for flourish_time in [16, 32, 48]:
+        if flourish_time < loop_duration:
+            start_sample = int(flourish_time * sample_rate)
+            flourish_duration = 0.5
+            end_sample = int((flourish_time + flourish_duration) * sample_rate)
+            
+            if end_sample <= len(sound):
+                flourish_t = t[start_sample:end_sample] - flourish_time
+                # Slide whistle effect
+                start_freq = 1000
+                end_freq = 2000
+                frequency = start_freq + (end_freq - start_freq) * flourish_t / flourish_duration
+                flourish_sound = np.sin(2 * np.pi * frequency * flourish_t)
+                flourish_envelope = np.exp(-flourish_t / 0.2)
+                flourish_sound = flourish_sound * flourish_envelope * 0.02
+                sound[start_sample:end_sample] += flourish_sound
+    
+    # Normalize and ensure seamless looping
     max_val = np.max(np.abs(sound))
     if max_val > 0:
-        sound = sound / max_val * 0.8  # Leave headroom to prevent clipping
+        sound = sound / max_val * 0.85  # Leave headroom
+    
+    # Fade in/out the first/last 100ms for seamless looping
+    fade_samples = int(0.1 * sample_rate)
+    sound[:fade_samples] *= np.linspace(0, 1, fade_samples)
+    sound[-fade_samples:] *= np.linspace(1, 0, fade_samples)
     
     write_wav('ambient_music.wav', sound)
 
