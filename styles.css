@@ -16,47 +16,7 @@ body {
     -webkit-user-select: none; /* Safari */
     -moz-user-select: none;    /* Firefox */
     -ms-user-select: none;     /* IE/Edge */
-    cursor: none;
-}
-
-/* Dynamic Hammer Cursor */
-.dynamic-hammer-cursor {
-    position: fixed;
-    width: 128px;
-    height: 128px;
-    background-image: url('assets/hammer-cursor-128.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    pointer-events: none;
-    z-index: 10000;
-    transform: translate(-50%, -50%);
-    transition: transform 0.1s ease-out;
-}
-
-.dynamic-hammer-cursor.hitting {
-    animation: cursorHit 0.4s ease-out forwards;
-}
-
-@keyframes cursorHit {
-    0% {
-        transform: translate(-50%, -50%) scale(0.9) rotate(45deg);
-    }
-    15% {
-        transform: translate(-50%, -50%) scale(1.0) rotate(30deg);
-    }
-    40% {
-        transform: translate(-50%, -50%) scale(1.3) rotate(-15deg);
-    }
-    60% {
-        transform: translate(-50%, -50%) scale(1.4) rotate(-25deg);
-    }
-    80% {
-        transform: translate(-50%, -50%) scale(1.2) rotate(-10deg);
-    }
-    100% {
-        transform: translate(-50%, -50%) scale(1) rotate(0deg);
-    }
+    cursor: url('assets/hammer-cursor-128.png') 64 64, pointer;
 }
 
 /* Prevent dragging any images or elements */

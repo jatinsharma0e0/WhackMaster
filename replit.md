@@ -14,7 +14,6 @@ Preferred communication style: Simple, everyday language.
 Visual preferences: Custom hammer icon instead of emoji characters.
 Custom cursor: Custom hammer cursor (hammer-cursor.png) replaces default mouse cursor throughout the game.
 Hammer animations: Realistic hammer hitting animations for both mouse clicks and numpad controls with rotation effects and impact explosions.
-Dynamic cursor: The actual mouse cursor animates with striking motion on clicks (swings from +45° to -25° with scaling effects).
 
 ## System Architecture
 
