@@ -36,10 +36,159 @@ export default function Game() {
 
   const gameIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const moleTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const backgroundMusicRef = useRef<OscillatorNode | null>(null);
+  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
 
   const clearAllTimeouts = useCallback(() => {
     moleTimeoutsRef.current.forEach(timeout => clearTimeout(timeout));
     moleTimeoutsRef.current = [];
+  }, []);
+
+  // Audio functions
+  const initAudio = useCallback(() => {
+    if (!audioContextRef.current) {
+      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    return audioContextRef.current;
+  }, []);
+
+  const playHitSound = useCallback(() => {
+    if (!isSoundEnabled) return;
+    
+    const audioContext = initAudio();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+    
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.1);
+  }, [isSoundEnabled, initAudio]);
+
+  const playMolePopSound = useCallback(() => {
+    if (!isSoundEnabled) return;
+    
+    const audioContext = initAudio();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + 0.05);
+    
+    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.05);
+  }, [isSoundEnabled, initAudio]);
+
+  const playGameOverSound = useCallback(() => {
+    if (!isSoundEnabled) return;
+    
+    const audioContext = initAudio();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.5);
+    
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.5);
+  }, [isSoundEnabled, initAudio]);
+
+  const startBackgroundMusic = useCallback(() => {
+    if (!isSoundEnabled) return;
+    
+    const audioContext = initAudio();
+    
+    // Stop existing background music
+    if (backgroundMusicRef.current) {
+      backgroundMusicRef.current.stop();
+    }
+    
+    // Create a simple melody with oscillators
+    const playMelodyNote = (frequency: number, duration: number, startTime: number) => {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(frequency, startTime);
+      oscillator.type = 'triangle';
+      
+      gainNode.gain.setValueAtTime(0, startTime);
+      gainNode.gain.linearRampToValueAtTime(0.05, startTime + 0.1);
+      gainNode.gain.linearRampToValueAtTime(0.05, startTime + duration - 0.1);
+      gainNode.gain.linearRampToValueAtTime(0, startTime + duration);
+      
+      oscillator.start(startTime);
+      oscillator.stop(startTime + duration);
+    };
+    
+    // Simple cheerful melody
+    const melody = [
+      { freq: 523, duration: 0.3 }, // C5
+      { freq: 587, duration: 0.3 }, // D5
+      { freq: 659, duration: 0.3 }, // E5
+      { freq: 523, duration: 0.3 }, // C5
+      { freq: 659, duration: 0.3 }, // E5
+      { freq: 523, duration: 0.3 }, // C5
+      { freq: 587, duration: 0.6 }, // D5
+    ];
+    
+    let currentTime = audioContext.currentTime;
+    melody.forEach(note => {
+      playMelodyNote(note.freq, note.duration, currentTime);
+      currentTime += note.duration + 0.1;
+    });
+    
+    // Repeat melody every 3 seconds
+    const repeatInterval = setInterval(() => {
+      if (!isSoundEnabled) {
+        clearInterval(repeatInterval);
+        return;
+      }
+      
+      let currentTime = audioContext.currentTime;
+      melody.forEach(note => {
+        playMelodyNote(note.freq, note.duration, currentTime);
+        currentTime += note.duration + 0.1;
+      });
+    }, 3000);
+    
+    // Store reference to stop later
+    backgroundMusicRef.current = {
+      stop: () => clearInterval(repeatInterval)
+    } as any;
+  }, [isSoundEnabled, initAudio]);
+
+  const stopBackgroundMusic = useCallback(() => {
+    if (backgroundMusicRef.current) {
+      backgroundMusicRef.current.stop();
+      backgroundMusicRef.current = null;
+    }
+  }, []);
+
+  const toggleSound = useCallback(() => {
+    setIsSoundEnabled(prev => !prev);
   }, []);
 
   const hideMole = useCallback((index: number) => {
@@ -53,11 +202,14 @@ export default function Game() {
       i === index ? { ...mole, isVisible: true, isHit: false } : mole
     ));
 
+    // Play mole pop sound
+    playMolePopSound();
+
     // Hide mole after random duration (800ms to 1800ms)
     const hideTime = Math.random() * 1000 + 800;
     const timeout = setTimeout(() => hideMole(index), hideTime);
     moleTimeoutsRef.current.push(timeout);
-  }, [hideMole]);
+  }, [hideMole, playMolePopSound]);
 
   const spawnMoles = useCallback(() => {
     if (!gameState.isPlaying) return;
@@ -86,6 +238,9 @@ export default function Game() {
   const handleMoleHit = useCallback((index: number) => {
     if (!gameState.isPlaying || !moles[index].isVisible) return;
 
+    // Play hit sound
+    playHitSound();
+
     // Hide mole immediately and show hit effect
     setMoles(prev => prev.map((mole, i) => 
       i === index 
@@ -104,7 +259,7 @@ export default function Game() {
           : mole
       ));
     }, 500);
-  }, [gameState.isPlaying, moles]);
+  }, [gameState.isPlaying, moles, playHitSound]);
 
   const endGame = useCallback(() => {
     // Clear all intervals and timeouts first
@@ -116,6 +271,12 @@ export default function Game() {
 
     // Hide all moles
     setMoles(prev => prev.map(mole => ({ ...mole, isVisible: false })));
+
+    // Play game over sound
+    playGameOverSound();
+
+    // Stop background music
+    stopBackgroundMusic();
 
     // Update game state and handle high score
     setGameState(prev => {
@@ -141,6 +302,9 @@ export default function Game() {
       timeLeft: 30,
     }));
 
+    // Start background music
+    startBackgroundMusic();
+
     // Start game timer
     gameIntervalRef.current = setInterval(() => {
       setGameState(prev => {
@@ -148,7 +312,7 @@ export default function Game() {
         return { ...prev, timeLeft: newTimeLeft };
       });
     }, 1000);
-  }, []);
+  }, [startBackgroundMusic]);
 
   const handlePlayAgain = useCallback(() => {
     setShowGameOverModal(false);
@@ -173,6 +337,15 @@ export default function Game() {
     }
   }, [gameState.isPlaying, spawnMoles]);
 
+  // Effect to handle sound toggle
+  useEffect(() => {
+    if (!isSoundEnabled) {
+      stopBackgroundMusic();
+    } else if (gameState.isPlaying) {
+      startBackgroundMusic();
+    }
+  }, [isSoundEnabled, gameState.isPlaying, startBackgroundMusic, stopBackgroundMusic]);
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -180,17 +353,27 @@ export default function Game() {
         clearInterval(gameIntervalRef.current);
       }
       clearAllTimeouts();
+      stopBackgroundMusic();
     };
-  }, [clearAllTimeouts]);
+  }, [clearAllTimeouts, stopBackgroundMusic]);
 
   return (
     <div className="bg-game-bg min-h-screen font-sans">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Game Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-6xl font-bold game-brown mb-2 animate-bounce-in">
-            🔨 Whack-a-Mole! 🔨
-          </h1>
+          <div className="flex justify-center items-center gap-4 mb-4">
+            <h1 className="text-4xl md:text-6xl font-bold game-brown animate-bounce-in">
+              🔨 Whack-a-Mole! 🔨
+            </h1>
+            <Button
+              onClick={toggleSound}
+              variant="outline"
+              className="bg-white hover:bg-gray-100 border-2 border-gray-300 p-2 rounded-full"
+            >
+              {isSoundEnabled ? '🔊' : '🔇'}
+            </Button>
+          </div>
           <p className="text-gray-600 text-lg md:text-xl">Hit the moles as they pop up!</p>
         </div>
 
