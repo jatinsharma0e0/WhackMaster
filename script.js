@@ -45,6 +45,9 @@ let pressedKeys = new Set();
 // Keyboard Animation Variables
 let cursorHideTimeout = null;
 
+// Animated Cursor Variables
+let animatedCursor = null;
+
 
 
 
@@ -67,6 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeEventListeners();
     loadAudioFiles();
     updateHighScoreDisplay();
+    createAnimatedCursor();
 });
 
 /**
@@ -104,12 +108,6 @@ function createGameBoard() {
         const hole = document.createElement('div');
         hole.className = 'hole empty';
         hole.addEventListener('click', () => {
-            // Add cursor hit animation
-            document.body.classList.add('cursor-hitting');
-            setTimeout(() => {
-                document.body.classList.remove('cursor-hitting');
-            }, 300);
-            
             handleHoleClick(i);
         });
         
@@ -636,6 +634,11 @@ function hideMouseCursor() {
     // Add class to hide cursor everywhere
     document.body.classList.add('hide-cursor');
     
+    // Hide animated cursor
+    if (animatedCursor) {
+        animatedCursor.style.display = 'none';
+    }
+    
     // Clear any existing timeout
     if (cursorHideTimeout) {
         clearTimeout(cursorHideTimeout);
@@ -646,7 +649,45 @@ function showMouseCursor() {
     // Set timeout to show cursor after 500ms
     cursorHideTimeout = setTimeout(() => {
         document.body.classList.remove('hide-cursor');
+        if (animatedCursor) {
+            animatedCursor.style.display = 'block';
+        }
     }, 500);
+}
+
+/**
+ * Animated Cursor Functions
+ */
+function createAnimatedCursor() {
+    animatedCursor = document.createElement('div');
+    animatedCursor.className = 'animated-cursor';
+    document.body.appendChild(animatedCursor);
+    
+    // Track mouse movement
+    document.addEventListener('mousemove', updateCursorPosition);
+    
+    // Add click animation only when clicking on holes
+    elements.holesGrid.addEventListener('mousedown', (e) => {
+        if (e.target.closest('.hole')) {
+            animateCursorHit();
+        }
+    });
+}
+
+function updateCursorPosition(e) {
+    if (animatedCursor) {
+        animatedCursor.style.left = e.clientX + 'px';
+        animatedCursor.style.top = e.clientY + 'px';
+    }
+}
+
+function animateCursorHit() {
+    if (animatedCursor) {
+        animatedCursor.classList.add('hitting');
+        setTimeout(() => {
+            animatedCursor.classList.remove('hitting');
+        }, 300);
+    }
 }
 
 

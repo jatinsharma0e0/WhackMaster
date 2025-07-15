@@ -16,24 +16,37 @@ body {
     -webkit-user-select: none; /* Safari */
     -moz-user-select: none;    /* Firefox */
     -ms-user-select: none;     /* IE/Edge */
-    cursor: url('assets/hammer-cursor-128.png') 64 64, pointer;
-    transition: transform 0.2s ease-out;
+    cursor: none;
 }
 
-/* Cursor rotation animation on click */
-body.cursor-hitting {
+/* Dynamic Cursor for Animation */
+.animated-cursor {
+    position: fixed;
+    width: 128px;
+    height: 128px;
+    background-image: url('assets/hammer-cursor-128.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    pointer-events: none;
+    z-index: 10000;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease-out;
+}
+
+.animated-cursor.hitting {
     animation: cursorHit 0.3s ease-out forwards;
 }
 
 @keyframes cursorHit {
     0% {
-        transform: rotate(0deg);
+        transform: translate(-50%, -50%) rotate(0deg);
     }
     50% {
-        transform: rotate(-30deg);
+        transform: translate(-50%, -50%) rotate(-30deg);
     }
     100% {
-        transform: rotate(0deg);
+        transform: translate(-50%, -50%) rotate(0deg);
     }
 }
 
