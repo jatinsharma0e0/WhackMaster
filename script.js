@@ -683,6 +683,11 @@ function updateOverlayPosition(e) {
 }
 
 function animateHammerHit(x, y) {
+    // Hide the cursor overlay during hammer animation
+    if (cursorOverlay) {
+        cursorOverlay.style.opacity = '0';
+    }
+    
     // Create hammer animation element at click position
     const hammerDiv = document.createElement('div');
     hammerDiv.className = 'hammer-hit-animation';
@@ -713,10 +718,14 @@ function animateHammerHit(x, y) {
         }, 200);
     }, 240); // Show impact at 60% of animation (0.4s * 0.6 = 240ms)
     
-    // Remove hammer animation after completion
+    // Remove hammer animation after completion and restore cursor overlay
     setTimeout(() => {
         if (document.body.contains(hammerDiv)) {
             document.body.removeChild(hammerDiv);
+        }
+        // Show cursor overlay again
+        if (cursorOverlay) {
+            cursorOverlay.style.opacity = '1';
         }
     }, 400);
 }
