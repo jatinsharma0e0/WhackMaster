@@ -126,6 +126,13 @@ function initializeEventListeners() {
         e.preventDefault();
         return false;
     });
+    
+    // Add global click animation during game
+    document.addEventListener('click', function(e) {
+        if (gameState.isPlaying) {
+            createGlobalHammerAnimation(e.clientX, e.clientY);
+        }
+    });
 }
 
 /**
@@ -356,39 +363,39 @@ function createHammerAnimation(holeContainer) {
     
     const hammerSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     hammerSvg.className = 'hammer-svg';
-    hammerSvg.setAttribute('width', '40');
-    hammerSvg.setAttribute('height', '40');
-    hammerSvg.setAttribute('viewBox', '0 0 40 40');
+    hammerSvg.setAttribute('width', '60');
+    hammerSvg.setAttribute('height', '60');
+    hammerSvg.setAttribute('viewBox', '0 0 60 60');
     
     // Hammer handle
     const handle = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    handle.setAttribute('x', '16');
-    handle.setAttribute('y', '8');
-    handle.setAttribute('width', '8');
-    handle.setAttribute('height', '24');
+    handle.setAttribute('x', '24');
+    handle.setAttribute('y', '12');
+    handle.setAttribute('width', '12');
+    handle.setAttribute('height', '36');
     handle.setAttribute('fill', '#A0522D');
     handle.setAttribute('stroke', '#654321');
-    handle.setAttribute('stroke-width', '1');
+    handle.setAttribute('stroke-width', '2');
     
     // Hammer head
     const head = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    head.setAttribute('x', '10');
-    head.setAttribute('y', '4');
-    head.setAttribute('width', '20');
-    head.setAttribute('height', '12');
+    head.setAttribute('x', '15');
+    head.setAttribute('y', '6');
+    head.setAttribute('width', '30');
+    head.setAttribute('height', '18');
     head.setAttribute('fill', '#C0C0C0');
     head.setAttribute('stroke', '#808080');
-    head.setAttribute('stroke-width', '1');
-    head.setAttribute('rx', '2');
+    head.setAttribute('stroke-width', '2');
+    head.setAttribute('rx', '3');
     
     // Hammer head highlight
     const highlight = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    highlight.setAttribute('x', '12');
-    highlight.setAttribute('y', '5');
-    highlight.setAttribute('width', '16');
-    highlight.setAttribute('height', '10');
+    highlight.setAttribute('x', '18');
+    highlight.setAttribute('y', '7.5');
+    highlight.setAttribute('width', '24');
+    highlight.setAttribute('height', '15');
     highlight.setAttribute('fill', '#E0E0E0');
-    highlight.setAttribute('rx', '1');
+    highlight.setAttribute('rx', '1.5');
     
     hammerSvg.appendChild(handle);
     hammerSvg.appendChild(head);
@@ -401,7 +408,63 @@ function createHammerAnimation(holeContainer) {
         if (holeContainer.contains(hammerDiv)) {
             holeContainer.removeChild(hammerDiv);
         }
-    }, 300);
+    }, 400);
+}
+
+function createGlobalHammerAnimation(x, y) {
+    const hammerDiv = document.createElement('div');
+    hammerDiv.className = 'global-hammer-animation';
+    hammerDiv.style.left = x + 'px';
+    hammerDiv.style.top = y + 'px';
+    
+    const hammerSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    hammerSvg.className = 'hammer-svg';
+    hammerSvg.setAttribute('width', '60');
+    hammerSvg.setAttribute('height', '60');
+    hammerSvg.setAttribute('viewBox', '0 0 60 60');
+    
+    // Hammer handle
+    const handle = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    handle.setAttribute('x', '24');
+    handle.setAttribute('y', '12');
+    handle.setAttribute('width', '12');
+    handle.setAttribute('height', '36');
+    handle.setAttribute('fill', '#A0522D');
+    handle.setAttribute('stroke', '#654321');
+    handle.setAttribute('stroke-width', '2');
+    
+    // Hammer head
+    const head = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    head.setAttribute('x', '15');
+    head.setAttribute('y', '6');
+    head.setAttribute('width', '30');
+    head.setAttribute('height', '18');
+    head.setAttribute('fill', '#C0C0C0');
+    head.setAttribute('stroke', '#808080');
+    head.setAttribute('stroke-width', '2');
+    head.setAttribute('rx', '3');
+    
+    // Hammer head highlight
+    const highlight = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    highlight.setAttribute('x', '18');
+    highlight.setAttribute('y', '7.5');
+    highlight.setAttribute('width', '24');
+    highlight.setAttribute('height', '15');
+    highlight.setAttribute('fill', '#E0E0E0');
+    highlight.setAttribute('rx', '1.5');
+    
+    hammerSvg.appendChild(handle);
+    hammerSvg.appendChild(head);
+    hammerSvg.appendChild(highlight);
+    hammerDiv.appendChild(hammerSvg);
+    
+    document.body.appendChild(hammerDiv);
+    
+    setTimeout(() => {
+        if (document.body.contains(hammerDiv)) {
+            document.body.removeChild(hammerDiv);
+        }
+    }, 400);
 }
 
 function createBurstAnimation(holeContainer) {

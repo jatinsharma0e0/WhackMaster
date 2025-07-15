@@ -170,7 +170,7 @@ img, svg, canvas, video {
 }
 
 .game-board:active {
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg transform='rotate(55 16 16)'%3E%3Crect x='12' y='4' width='8' height='16' fill='%23A0522D' stroke='%23654321' stroke-width='1'/%3E%3Crect x='8' y='2' width='16' height='8' fill='%23C0C0C0' stroke='%23808080' stroke-width='1' rx='2'/%3E%3Crect x='10' y='3' width='12' height='6' fill='%23E0E0E0'/%3E%3C/g%3E%3C/svg%3E") 16 16, auto;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg transform='rotate(55 24 24)'%3E%3Crect x='18' y='6' width='12' height='24' fill='%23A0522D' stroke='%23654321' stroke-width='2'/%3E%3Crect x='12' y='3' width='24' height='12' fill='%23C0C0C0' stroke='%23808080' stroke-width='2' rx='3'/%3E%3Crect x='15' y='4.5' width='18' height='9' fill='%23E0E0E0'/%3E%3C/g%3E%3C/svg%3E") 24 24, auto;
 }
 
 .holes-grid {
@@ -194,7 +194,7 @@ img, svg, canvas, video {
     position: relative;
     overflow: hidden;
     transition: transform 0.2s;
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg transform='rotate(55 16 16)'%3E%3Crect x='12' y='4' width='8' height='16' fill='%23A0522D' stroke='%23654321' stroke-width='1'/%3E%3Crect x='8' y='2' width='16' height='8' fill='%23C0C0C0' stroke='%23808080' stroke-width='1' rx='2'/%3E%3Crect x='10' y='3' width='12' height='6' fill='%23E0E0E0'/%3E%3C/g%3E%3C/svg%3E") 16 16, pointer;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg transform='rotate(55 24 24)'%3E%3Crect x='18' y='6' width='12' height='24' fill='%23A0522D' stroke='%23654321' stroke-width='2'/%3E%3Crect x='12' y='3' width='24' height='12' fill='%23C0C0C0' stroke='%23808080' stroke-width='2' rx='3'/%3E%3Crect x='15' y='4.5' width='18' height='9' fill='%23E0E0E0'/%3E%3C/g%3E%3C/svg%3E") 24 24, pointer;
     background: radial-gradient(circle at center, hsl(215, 28%, 35%) 0%, hsl(215, 28%, 25%) 50%, hsl(215, 28%, 15%) 100%);
     border: 4px solid var(--game-brown);
     box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.3);
@@ -275,13 +275,21 @@ img, svg, canvas, video {
     left: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
-    animation: hammerStrike 0.3s ease-out;
+    animation: hammerStrike 0.4s ease-out;
     z-index: 5;
 }
 
+/* Global hammer animation for any click */
+.global-hammer-animation {
+    position: fixed;
+    pointer-events: none;
+    animation: hammerStrike 0.4s ease-out;
+    z-index: 1000;
+}
+
 .hammer-svg {
-    width: 40px;
-    height: 40px;
+    width: 60px;
+    height: 60px;
     transform: rotate(45deg);
 }
 
@@ -607,16 +615,24 @@ img, svg, canvas, video {
 }
 
 @keyframes hammerStrike {
-    0% { 
-        transform: translate(-50%, -50%) scale(0.8) rotate(-45deg) translateY(-10px);
+    0% {
+        transform: translate(-50%, -80%) scale(0.3) rotate(10deg);
         opacity: 0;
     }
-    50% { 
-        transform: translate(-50%, -50%) scale(1.2) rotate(-45deg) translateY(0);
+    30% {
+        transform: translate(-50%, -60%) scale(0.8) rotate(25deg);
+        opacity: 0.8;
+    }
+    60% {
+        transform: translate(-50%, -50%) scale(1.3) rotate(45deg);
         opacity: 1;
     }
-    100% { 
-        transform: translate(-50%, -50%) scale(1) rotate(-45deg) translateY(5px);
+    80% {
+        transform: translate(-50%, -45%) scale(1.1) rotate(50deg);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translate(-50%, -40%) scale(0.9) rotate(55deg);
         opacity: 0;
     }
 }
