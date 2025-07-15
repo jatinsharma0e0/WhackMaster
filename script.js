@@ -27,6 +27,7 @@ let backgroundMusic = null;
 let ambientMusic = null;
 let isKeyPressed = false;
 let pressedKeys = new Set();
+let cursorRestoreTimeout = null;
 
 // DOM Elements
 let elements = {};
@@ -505,6 +506,12 @@ function handleHoleClick(index) {
 function teleportCursorToHole(holeIndex) {
     if (!gameState.isPlaying) return;
     
+    // Clear any existing cursor restore timeout to prevent conflicts
+    if (cursorRestoreTimeout) {
+        clearTimeout(cursorRestoreTimeout);
+        cursorRestoreTimeout = null;
+    }
+    
     // Hide the original cursor during teleport strike
     elements.gameBoard.style.cursor = 'none';
     document.querySelectorAll('.hole').forEach(hole => {
@@ -603,9 +610,15 @@ function handleKeyUp(event) {
     // Remove key from pressed keys set
     pressedKeys.delete(key);
     
+    // Clear any existing cursor restore timeout
+    if (cursorRestoreTimeout) {
+        clearTimeout(cursorRestoreTimeout);
+    }
+    
     // Restore cursor after 2 seconds delay
-    setTimeout(() => {
+    cursorRestoreTimeout = setTimeout(() => {
         restoreOriginalCursor();
+        cursorRestoreTimeout = null;
     }, 2000);
     
     // Prevent default to avoid browser behavior
