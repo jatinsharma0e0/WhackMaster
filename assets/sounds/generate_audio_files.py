@@ -332,6 +332,99 @@ def generate_explosion_sound():
     
     write_wav('explosion.wav', sound)
 
+def generate_hammer_hit_sound():
+    """Generate hammer hitting sound - sharp metallic strike"""
+    sample_rate = 44100
+    duration = 0.3
+    samples = np.zeros(int(sample_rate * duration))
+    
+    # Generate initial strike - sharp attack
+    strike_duration = 0.05
+    strike_samples = int(sample_rate * strike_duration)
+    
+    # Create metallic ping with harmonics
+    t = np.linspace(0, strike_duration, strike_samples)
+    
+    # Primary frequency (metallic ping)
+    freq1 = 800
+    freq2 = 1200
+    freq3 = 1600
+    
+    # Generate strike with harmonics
+    strike = (np.sin(2 * np.pi * freq1 * t) * 0.6 +
+             np.sin(2 * np.pi * freq2 * t) * 0.3 +
+             np.sin(2 * np.pi * freq3 * t) * 0.1)
+    
+    # Add some noise for realism
+    noise = np.random.normal(0, 0.1, strike_samples)
+    strike = strike + noise
+    
+    # Sharp attack envelope
+    attack_envelope = np.exp(-t * 40)
+    strike = strike * attack_envelope
+    
+    # Add reverb tail
+    reverb_duration = 0.25
+    reverb_samples = int(sample_rate * reverb_duration)
+    reverb_t = np.linspace(0, reverb_duration, reverb_samples)
+    
+    # Generate reverb with decaying harmonics
+    reverb = (np.sin(2 * np.pi * freq1 * 0.8 * reverb_t) * 0.2 +
+             np.sin(2 * np.pi * freq2 * 0.7 * reverb_t) * 0.1)
+    
+    # Decay envelope for reverb
+    reverb_envelope = np.exp(-reverb_t * 8)
+    reverb = reverb * reverb_envelope
+    
+    # Combine strike and reverb
+    samples[:strike_samples] += strike
+    samples[strike_samples:strike_samples+reverb_samples] += reverb
+    
+    # Normalize
+    samples = samples / np.max(np.abs(samples)) * 0.9
+    
+    write_wav('hammer_hit.wav', samples)
+
+def generate_button_click_sound():
+    """Generate button click sound - soft digital click"""
+    sample_rate = 44100
+    duration = 0.15
+    samples = np.zeros(int(sample_rate * duration))
+    
+    # Generate click - two-tone beep
+    click_duration = 0.05
+    click_samples = int(sample_rate * click_duration)
+    
+    t = np.linspace(0, click_duration, click_samples)
+    
+    # First tone (higher)
+    freq1 = 1000
+    tone1 = np.sin(2 * np.pi * freq1 * t)
+    
+    # Second tone (lower)
+    freq2 = 800
+    tone2 = np.sin(2 * np.pi * freq2 * t)
+    
+    # Combine tones with slight delay
+    click = tone1 * 0.6
+    
+    # Add second tone with delay
+    delay_samples = int(sample_rate * 0.02)
+    if delay_samples < click_samples:
+        click[delay_samples:] += tone2[:click_samples-delay_samples] * 0.4
+    
+    # Apply envelope
+    envelope = np.exp(-t * 20)
+    click = click * envelope
+    
+    # Add to samples
+    samples[:click_samples] += click
+    
+    # Normalize
+    samples = samples / np.max(np.abs(samples)) * 0.7
+    
+    write_wav('button_click.wav', samples)
+
 if __name__ == "__main__":
     print("Generating audio files...")
     
@@ -352,5 +445,11 @@ if __name__ == "__main__":
     
     generate_explosion_sound()
     print("✓ Generated explosion.wav")
+    
+    generate_hammer_hit_sound()
+    print("✓ Generated hammer_hit.wav")
+    
+    generate_button_click_sound()
+    print("✓ Generated button_click.wav")
     
     print("All audio files generated successfully!")

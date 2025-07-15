@@ -15,6 +15,7 @@ Visual preferences: Custom hammer icon instead of emoji characters.
 Custom cursor: Custom hammer cursor (hammer-cursor.png) replaces default mouse cursor throughout the game with hotspot positioned at (0, 0) and cursor overlay offset by (-50px, -45px).
 Cursor animation: Uses the exact same hammer hitting animation as numpad controls on any click anywhere on the page. The hammer appears at click position, performs the full hitting motion with rotation and scaling effects, and shows an impact explosion, creating a consistent hitting experience across the entire canvas.
 Hammer animations: Realistic hammer hitting animations for both numpad controls (keys 1-9) and mouse clicks anywhere on the page, with rotation effects and impact explosions. All interactions now use the same consistent hammer animation system.
+Audio feedback: Hammer hitting sound plays for all clicks and numpad key presses, button click sound plays for UI button interactions.
 
 ## System Architecture
 
@@ -106,6 +107,8 @@ Hammer animations: Realistic hammer hitting animations for both numpad controls 
 │       ├── background_music.wav   # Energetic gameplay music (265KB)
 │       ├── ambient_music.wav      # Gentle menu music (706KB)
 │       ├── explosion.wav          # Bomb explosion sound effect (35KB)
+│       ├── hammer_hit.wav         # Hammer hitting sound for clicks and numpad (13KB)
+│       ├── button_click.wav       # Button click sound for UI interactions (7KB)
 │       └── generate_audio_files.py # Script to regenerate audio files
 └── README.md               # Documentation
 ```

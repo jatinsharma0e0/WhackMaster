@@ -108,6 +108,7 @@ function createGameBoard() {
         const hole = document.createElement('div');
         hole.className = 'hole empty';
         hole.addEventListener('click', () => {
+            playHammerHitSound();
             handleHoleClick(i);
         });
         
@@ -130,10 +131,22 @@ function createGameBoard() {
  * Set up all event listeners
  */
 function initializeEventListeners() {
-    elements.startButton.addEventListener('click', startGame);
-    elements.soundToggle.addEventListener('click', toggleSound);
-    elements.playAgainButton.addEventListener('click', handlePlayAgain);
-    elements.closeModalButton.addEventListener('click', closeModal);
+    elements.startButton.addEventListener('click', () => {
+        playButtonClickSound();
+        startGame();
+    });
+    elements.soundToggle.addEventListener('click', () => {
+        playButtonClickSound();
+        toggleSound();
+    });
+    elements.playAgainButton.addEventListener('click', () => {
+        playButtonClickSound();
+        handlePlayAgain();
+    });
+    elements.closeModalButton.addEventListener('click', () => {
+        playButtonClickSound();
+        closeModal();
+    });
     
     // Keyboard controls
     document.addEventListener('keydown', handleKeyDown);
@@ -174,7 +187,9 @@ function loadAudioFiles() {
         'game_over.wav',
         'background_music.wav',
         'ambient_music.wav',
-        'explosion.wav'
+        'explosion.wav',
+        'hammer_hit.wav',
+        'button_click.wav'
     ];
     
     soundFiles.forEach(filename => {
@@ -288,6 +303,30 @@ function stopAmbientSound() {
         } catch (e) {
             console.log('Stop ambient music error:', e);
         }
+    }
+}
+
+function playHammerHitSound() {
+    if (!isSoundEnabled || !audioFiles.hammer_hit) return;
+    
+    try {
+        audioFiles.hammer_hit.currentTime = 0;
+        audioFiles.hammer_hit.volume = 0.5;
+        audioFiles.hammer_hit.play().catch(e => console.log('Hammer hit sound failed:', e));
+    } catch (e) {
+        console.log('Hammer hit sound error:', e);
+    }
+}
+
+function playButtonClickSound() {
+    if (!isSoundEnabled || !audioFiles.button_click) return;
+    
+    try {
+        audioFiles.button_click.currentTime = 0;
+        audioFiles.button_click.volume = 0.4;
+        audioFiles.button_click.play().catch(e => console.log('Button click sound failed:', e));
+    } catch (e) {
+        console.log('Button click sound error:', e);
     }
 }
 
@@ -759,6 +798,7 @@ function handleKeyDown(event) {
     
     // Hide mouse cursor and show hammer animation
     hideMouseCursor();
+    playHammerHitSound();
     createHammerHitAnimation(holeIndex);
     
     // Handle the hit (check for bombs first)
