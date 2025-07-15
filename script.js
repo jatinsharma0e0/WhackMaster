@@ -25,6 +25,8 @@ let isSoundEnabled = true;
 let audioFiles = {};
 let backgroundMusic = null;
 let ambientMusic = null;
+let isKeyPressed = false;
+let pressedKeys = new Set();
 
 // DOM Elements
 let elements = {};
@@ -103,7 +105,8 @@ function initializeEventListeners() {
     elements.closeModalButton.addEventListener('click', closeModal);
     
     // Keyboard controls
-    document.addEventListener('keydown', handleKeyPress);
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keyup', handleKeyUp);
     
     // Modal click outside to close
     elements.gameOverModal.addEventListener('click', function(e) {
@@ -442,13 +445,47 @@ function handleHoleClick(index) {
     handleMoleHit(index);
 }
 
-function handleKeyPress(event) {
+function handleKeyDown(event) {
     const key = event.key;
     const holeIndex = keyMap[key];
     
-    if (holeIndex !== undefined) {
-        handleMoleHit(holeIndex);
+    // Only process numpad keys for the game
+    if (holeIndex === undefined) return;
+    
+    // Prevent multiple keys being pressed simultaneously
+    if (pressedKeys.size > 0) {
+        event.preventDefault();
+        return;
     }
+    
+    // Prevent key repeat
+    if (pressedKeys.has(key)) {
+        event.preventDefault();
+        return;
+    }
+    
+    // Add key to pressed keys set
+    pressedKeys.add(key);
+    
+    // Handle the hit
+    handleMoleHit(holeIndex);
+    
+    // Prevent default to avoid browser behavior
+    event.preventDefault();
+}
+
+function handleKeyUp(event) {
+    const key = event.key;
+    const holeIndex = keyMap[key];
+    
+    // Only process numpad keys for the game
+    if (holeIndex === undefined) return;
+    
+    // Remove key from pressed keys set
+    pressedKeys.delete(key);
+    
+    // Prevent default to avoid browser behavior
+    event.preventDefault();
 }
 
 function updateScoreDisplay() {
@@ -496,6 +533,9 @@ function endGame() {
     
     gameState.isPlaying = false;
     
+    // Clear any pressed keys
+    pressedKeys.clear();
+    
     // Update UI
     elements.startButton.textContent = '🎮 Start Game';
     elements.startButton.disabled = false;
@@ -510,6 +550,9 @@ function startGame() {
     gameState.isPlaying = true;
     gameState.score = 0;
     gameState.timeLeft = 30;
+    
+    // Clear any pressed keys
+    pressedKeys.clear();
     
     // Reset moles
     moles = Array(9).fill(null).map(() => ({
