@@ -78,40 +78,98 @@ export default function Game() {
     if (!isSoundEnabled) return;
     
     const audioContext = initAudio();
+    
+    // Create cute "pop" sound for mole appearance
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
+    const filter = audioContext.createBiquadFilter();
     
-    oscillator.connect(gainNode);
+    oscillator.connect(filter);
+    filter.connect(gainNode);
     gainNode.connect(audioContext.destination);
     
-    oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
-    oscillator.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + 0.05);
+    oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(800, audioContext.currentTime + 0.03);
+    oscillator.frequency.exponentialRampToValueAtTime(300, audioContext.currentTime + 0.1);
+    oscillator.type = 'triangle';
     
-    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
+    // Bright, playful filtering
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(1000, audioContext.currentTime);
+    filter.Q.setValueAtTime(3, audioContext.currentTime);
+    
+    gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.15);
     
     oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.05);
+    oscillator.stop(audioContext.currentTime + 0.15);
   }, [isSoundEnabled, initAudio]);
 
   const playGameOverSound = useCallback(() => {
     if (!isSoundEnabled) return;
     
     const audioContext = initAudio();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
     
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+    // Create playful "wah-wah-wah" game over sound
+    const playGameOverNote = (frequency: number, startTime: number, duration: number) => {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      const filter = audioContext.createBiquadFilter();
+      
+      oscillator.connect(filter);
+      filter.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(frequency, startTime);
+      oscillator.type = 'triangle';
+      
+      // Muted, warm tone
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(frequency * 0.8, startTime);
+      filter.Q.setValueAtTime(2, startTime);
+      
+      gainNode.gain.setValueAtTime(0.1, startTime);
+      gainNode.gain.linearRampToValueAtTime(0.15, startTime + 0.1);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+      
+      oscillator.start(startTime);
+      oscillator.stop(startTime + duration);
+    };
     
-    oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
-    oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.5);
+    // Classic "wah-wah-wah" descending pattern
+    const gameOverNotes = [
+      { freq: 440, duration: 0.4 }, // A4
+      { freq: 370, duration: 0.4 }, // F#4
+      { freq: 294, duration: 0.8 }, // D4
+    ];
     
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+    let currentTime = audioContext.currentTime;
+    gameOverNotes.forEach((note, index) => {
+      playGameOverNote(note.freq, currentTime, note.duration);
+      
+      // Add harmonic for richer sound
+      playGameOverNote(note.freq * 1.5, currentTime, note.duration);
+      
+      currentTime += note.duration + 0.1;
+    });
     
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.5);
+    // Add final "thud" sound
+    setTimeout(() => {
+      const thudOsc = audioContext.createOscillator();
+      const thudGain = audioContext.createGain();
+      
+      thudOsc.connect(thudGain);
+      thudGain.connect(audioContext.destination);
+      
+      thudOsc.frequency.setValueAtTime(80, audioContext.currentTime);
+      thudOsc.type = 'square';
+      
+      thudGain.gain.setValueAtTime(0.2, audioContext.currentTime);
+      thudGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+      
+      thudOsc.start(audioContext.currentTime);
+      thudOsc.stop(audioContext.currentTime + 0.3);
+    }, 1000);
   }, [isSoundEnabled, initAudio]);
 
   const startBackgroundMusic = useCallback(() => {
@@ -124,60 +182,107 @@ export default function Game() {
       backgroundMusicRef.current.stop();
     }
     
-    // Create a simple melody with oscillators
-    const playMelodyNote = (frequency: number, duration: number, startTime: number) => {
+    // Create energetic gameplay music (120-140 BPM)
+    const playGameNote = (frequency: number, duration: number, startTime: number, instrument: string = 'triangle') => {
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
+      const filter = audioContext.createBiquadFilter();
       
-      oscillator.connect(gainNode);
+      oscillator.connect(filter);
+      filter.connect(gainNode);
       gainNode.connect(audioContext.destination);
       
       oscillator.frequency.setValueAtTime(frequency, startTime);
-      oscillator.type = 'triangle';
+      oscillator.type = instrument as OscillatorType;
+      
+      // Bright, crisp sound for gameplay
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(frequency * 2, startTime);
+      filter.Q.setValueAtTime(2, startTime);
       
       gainNode.gain.setValueAtTime(0, startTime);
-      gainNode.gain.linearRampToValueAtTime(0.05, startTime + 0.1);
-      gainNode.gain.linearRampToValueAtTime(0.05, startTime + duration - 0.1);
+      gainNode.gain.linearRampToValueAtTime(0.08, startTime + 0.05);
+      gainNode.gain.linearRampToValueAtTime(0.08, startTime + duration - 0.05);
       gainNode.gain.linearRampToValueAtTime(0, startTime + duration);
       
       oscillator.start(startTime);
       oscillator.stop(startTime + duration);
     };
     
-    // Simple cheerful melody
-    const melody = [
-      { freq: 523, duration: 0.3 }, // C5
-      { freq: 587, duration: 0.3 }, // D5
-      { freq: 659, duration: 0.3 }, // E5
-      { freq: 523, duration: 0.3 }, // C5
-      { freq: 659, duration: 0.3 }, // E5
-      { freq: 523, duration: 0.3 }, // C5
-      { freq: 587, duration: 0.6 }, // D5
+    // Add percussion layer
+    const playPercussion = (startTime: number) => {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(80, startTime);
+      oscillator.type = 'square';
+      
+      gainNode.gain.setValueAtTime(0.15, startTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.1);
+      
+      oscillator.start(startTime);
+      oscillator.stop(startTime + 0.1);
+    };
+    
+    // Energetic gameplay melody (inspired by mini-games)
+    const gameplayMelody = [
+      // Main theme - upbeat and rhythmic
+      { freq: 659, duration: 0.2, instrument: 'triangle' }, // E5
+      { freq: 784, duration: 0.2, instrument: 'triangle' }, // G5
+      { freq: 880, duration: 0.2, instrument: 'triangle' }, // A5
+      { freq: 784, duration: 0.2, instrument: 'triangle' }, // G5
+      { freq: 659, duration: 0.4, instrument: 'triangle' }, // E5
+      { freq: 523, duration: 0.2, instrument: 'triangle' }, // C5
+      { freq: 659, duration: 0.4, instrument: 'triangle' }, // E5
+      { freq: 587, duration: 0.2, instrument: 'triangle' }, // D5
+      { freq: 659, duration: 0.2, instrument: 'triangle' }, // E5
+      { freq: 784, duration: 0.2, instrument: 'triangle' }, // G5
+      { freq: 880, duration: 0.4, instrument: 'triangle' }, // A5
+      { freq: 784, duration: 0.4, instrument: 'triangle' }, // G5
     ];
     
-    let currentTime = audioContext.currentTime;
-    melody.forEach(note => {
-      playMelodyNote(note.freq, note.duration, currentTime);
-      currentTime += note.duration + 0.1;
-    });
-    
-    // Repeat melody every 3 seconds
-    const repeatInterval = setInterval(() => {
-      if (!isSoundEnabled) {
-        clearInterval(repeatInterval);
-        return;
-      }
+    const playGameplayLoop = () => {
+      if (!isSoundEnabled) return;
       
       let currentTime = audioContext.currentTime;
-      melody.forEach(note => {
-        playMelodyNote(note.freq, note.duration, currentTime);
-        currentTime += note.duration + 0.1;
+      
+      // Play main melody
+      gameplayMelody.forEach((note, index) => {
+        playGameNote(note.freq, note.duration, currentTime, note.instrument);
+        // Add percussion on beats
+        if (index % 2 === 0) {
+          playPercussion(currentTime);
+        }
+        currentTime += note.duration + 0.05;
       });
+      
+      // Add bass line
+      const bassNotes = [262, 330, 392, 330]; // C4, E4, G4, E4
+      let bassTime = audioContext.currentTime;
+      bassNotes.forEach(freq => {
+        playGameNote(freq, 0.4, bassTime, 'sawtooth');
+        bassTime += 0.5;
+      });
+    };
+    
+    // Start immediately
+    playGameplayLoop();
+    
+    // Loop every 3 seconds
+    const gameplayInterval = setInterval(() => {
+      if (!isSoundEnabled) {
+        clearInterval(gameplayInterval);
+        return;
+      }
+      playGameplayLoop();
     }, 3000);
     
     // Store reference to stop later
     backgroundMusicRef.current = {
-      stop: () => clearInterval(repeatInterval)
+      stop: () => clearInterval(gameplayInterval)
     } as any;
   }, [isSoundEnabled, initAudio]);
 
@@ -198,8 +303,8 @@ export default function Game() {
       ambientSoundRef.current.stop();
     }
     
-    // Create a gentle ambient sound with multiple layers
-    const createAmbientLayer = (frequency: number, volume: number) => {
+    // Create cheerful, inviting start screen music (90-110 BPM)
+    const playMenuNote = (frequency: number, duration: number, startTime: number, instrument: string = 'sine') => {
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
       const filter = audioContext.createBiquadFilter();
@@ -208,47 +313,96 @@ export default function Game() {
       filter.connect(gainNode);
       gainNode.connect(audioContext.destination);
       
-      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
-      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(frequency, startTime);
+      oscillator.type = instrument as OscillatorType;
       
-      // Add gentle filtering for a softer sound
+      // Warm, welcoming sound with gentle filtering
       filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(800, audioContext.currentTime);
-      filter.Q.setValueAtTime(0.5, audioContext.currentTime);
+      filter.frequency.setValueAtTime(frequency * 1.5, startTime);
+      filter.Q.setValueAtTime(1, startTime);
       
-      gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+      gainNode.gain.setValueAtTime(0, startTime);
+      gainNode.gain.linearRampToValueAtTime(0.04, startTime + 0.1);
+      gainNode.gain.linearRampToValueAtTime(0.04, startTime + duration - 0.1);
+      gainNode.gain.linearRampToValueAtTime(0, startTime + duration);
       
-      // Add subtle frequency modulation for a more natural sound
-      const lfo = audioContext.createOscillator();
-      const lfoGain = audioContext.createGain();
-      lfo.connect(lfoGain);
-      lfoGain.connect(oscillator.frequency);
-      
-      lfo.frequency.setValueAtTime(0.1, audioContext.currentTime);
-      lfo.type = 'sine';
-      lfoGain.gain.setValueAtTime(10, audioContext.currentTime);
-      
-      oscillator.start(audioContext.currentTime);
-      lfo.start(audioContext.currentTime);
-      
-      return { oscillator, lfo };
+      oscillator.start(startTime);
+      oscillator.stop(startTime + duration);
     };
     
-    // Create multiple layers for a rich ambient sound
-    const layer1 = createAmbientLayer(220, 0.02); // Deep bass
-    const layer2 = createAmbientLayer(440, 0.015); // Mid tone
-    const layer3 = createAmbientLayer(880, 0.01); // High tone
+    // Add soft bell-like accompaniment
+    const playBellNote = (frequency: number, startTime: number) => {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(frequency, startTime);
+      oscillator.type = 'triangle';
+      
+      gainNode.gain.setValueAtTime(0.02, startTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 2);
+      
+      oscillator.start(startTime);
+      oscillator.stop(startTime + 2);
+    };
+    
+    // Gentle, carnival-like melody for main menu
+    const menuMelody = [
+      { freq: 523, duration: 0.8 }, // C5
+      { freq: 659, duration: 0.4 }, // E5
+      { freq: 784, duration: 0.4 }, // G5
+      { freq: 659, duration: 0.4 }, // E5
+      { freq: 523, duration: 0.8 }, // C5
+      { freq: 587, duration: 0.6 }, // D5
+      { freq: 659, duration: 0.6 }, // E5
+      { freq: 523, duration: 0.8 }, // C5
+      { freq: 392, duration: 0.4 }, // G4
+      { freq: 440, duration: 0.4 }, // A4
+      { freq: 523, duration: 1.2 }, // C5
+    ];
+    
+    const playMenuLoop = () => {
+      if (!isSoundEnabled) return;
+      
+      let currentTime = audioContext.currentTime;
+      
+      // Play main melody with ukulele-like sound
+      menuMelody.forEach((note, index) => {
+        playMenuNote(note.freq, note.duration, currentTime, 'triangle');
+        
+        // Add bell accompaniment on key notes
+        if (index % 3 === 0) {
+          playBellNote(note.freq * 2, currentTime);
+        }
+        
+        currentTime += note.duration + 0.1;
+      });
+      
+      // Add soft bass line
+      const bassTimes = [0, 2, 4, 6];
+      bassTimes.forEach((time, index) => {
+        const bassFreq = [131, 165, 196, 147][index]; // C3, E3, G3, D3
+        playMenuNote(bassFreq, 1.5, audioContext.currentTime + time, 'sine');
+      });
+    };
+    
+    // Start immediately
+    playMenuLoop();
+    
+    // Loop every 8 seconds (longer, more relaxed)
+    const menuInterval = setInterval(() => {
+      if (!isSoundEnabled) {
+        clearInterval(menuInterval);
+        return;
+      }
+      playMenuLoop();
+    }, 8000);
     
     // Store reference to stop later
     ambientSoundRef.current = {
-      stop: () => {
-        layer1.oscillator.stop();
-        layer1.lfo.stop();
-        layer2.oscillator.stop();
-        layer2.lfo.stop();
-        layer3.oscillator.stop();
-        layer3.lfo.stop();
-      }
+      stop: () => clearInterval(menuInterval)
     } as any;
   }, [isSoundEnabled, initAudio]);
 
