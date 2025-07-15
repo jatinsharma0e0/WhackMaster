@@ -111,6 +111,18 @@ function initializeEventListeners() {
             closeModal();
         }
     });
+    
+    // Prevent context menu on right-click in game area
+    elements.gameBoard.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        return false;
+    });
+    
+    // Prevent drag start on all game elements
+    elements.gameBoard.addEventListener('dragstart', function(e) {
+        e.preventDefault();
+        return false;
+    });
 }
 
 /**
