@@ -502,6 +502,49 @@ function handleHoleClick(index) {
     handleMoleHit(index);
 }
 
+function teleportCursorToHole(holeIndex) {
+    if (!gameState.isPlaying) return;
+    
+    // Get the hole element
+    const holeContainer = document.querySelector(`[data-index="${holeIndex}"]`);
+    if (!holeContainer) return;
+    
+    // Get hole position
+    const rect = holeContainer.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    // Create a temporary cursor element to show the striking animation
+    const tempCursor = document.createElement('div');
+    tempCursor.className = 'teleport-cursor';
+    tempCursor.innerHTML = `
+        <svg width="128" height="128" viewBox="0 0 128 128">
+            <g transform="rotate(75 64 64)">
+                <rect x="48" y="16" width="32" height="64" fill="#A0522D" stroke="#654321" stroke-width="4"/>
+                <rect x="32" y="8" width="64" height="32" fill="#C0C0C0" stroke="#808080" stroke-width="4" rx="8"/>
+                <rect x="40" y="12" width="48" height="24" fill="#E0E0E0"/>
+            </g>
+        </svg>
+    `;
+    
+    // Position the cursor at the hole center
+    tempCursor.style.position = 'fixed';
+    tempCursor.style.left = (centerX - 64) + 'px';
+    tempCursor.style.top = (centerY - 64) + 'px';
+    tempCursor.style.pointerEvents = 'none';
+    tempCursor.style.zIndex = '9999';
+    
+    // Add to body
+    document.body.appendChild(tempCursor);
+    
+    // Remove after animation
+    setTimeout(() => {
+        if (document.body.contains(tempCursor)) {
+            document.body.removeChild(tempCursor);
+        }
+    }, 300);
+}
+
 function handleKeyDown(event) {
     const key = event.key;
     const holeIndex = keyMap[key];
