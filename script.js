@@ -103,7 +103,15 @@ function createGameBoard() {
         
         const hole = document.createElement('div');
         hole.className = 'hole empty';
-        hole.addEventListener('click', () => handleHoleClick(i));
+        hole.addEventListener('click', () => {
+            // Add cursor hit animation
+            document.body.classList.add('cursor-hitting');
+            setTimeout(() => {
+                document.body.classList.remove('cursor-hitting');
+            }, 300);
+            
+            handleHoleClick(i);
+        });
         
         const mole = document.createElement('div');
         mole.className = 'mole';
