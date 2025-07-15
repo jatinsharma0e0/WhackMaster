@@ -157,6 +157,10 @@ export default function Game() {
     startGame();
   }, [startGame]);
 
+  const handleCloseModal = useCallback(() => {
+    setShowGameOverModal(false);
+  }, []);
+
   // Effect to handle game end when time runs out
   useEffect(() => {
     if (gameState.isPlaying && gameState.timeLeft <= 0) {
@@ -306,12 +310,21 @@ export default function Game() {
                   🏆 New High Score! 🏆
                 </div>
               )}
-              <Button
-                onClick={handlePlayAgain}
-                className="bg-game-amber hover:bg-yellow-500 text-white font-bold text-xl px-6 py-3 rounded-2xl shadow-lg transform transition-all duration-200 hover:scale-105 active:scale-95 border-4 border-yellow-600"
-              >
-                Play Again
-              </Button>
+              <div className="flex gap-4 justify-center">
+                <Button
+                  onClick={handlePlayAgain}
+                  className="bg-game-amber hover:bg-yellow-500 text-white font-bold text-xl px-6 py-3 rounded-2xl shadow-lg transform transition-all duration-200 hover:scale-105 active:scale-95 border-4 border-yellow-600"
+                >
+                  Play Again
+                </Button>
+                <Button
+                  onClick={handleCloseModal}
+                  variant="outline"
+                  className="bg-white hover:bg-gray-100 text-gray-700 font-bold text-xl px-6 py-3 rounded-2xl shadow-lg transform transition-all duration-200 hover:scale-105 active:scale-95 border-4 border-gray-300"
+                >
+                  Close
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
