@@ -284,6 +284,60 @@ function toggleSound() {
 }
 
 /**
+ * Cursor Teleportation Functions
+ */
+
+function teleportCursorToHole(holeIndex) {
+    if (!gameState.isPlaying) return;
+    
+    const holeContainer = document.querySelector(`[data-index="${holeIndex}"]`);
+    if (!holeContainer) return;
+    
+    const hole = holeContainer.querySelector('.hole');
+    if (!hole) return;
+    
+    // Get hole position
+    const rect = hole.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    // Create a temporary cursor element that appears at the hole
+    const cursorElement = document.createElement('div');
+    cursorElement.className = 'teleported-cursor';
+    cursorElement.style.position = 'fixed';
+    cursorElement.style.left = (centerX - 64) + 'px'; // Center the 128px cursor
+    cursorElement.style.top = (centerY - 64) + 'px';
+    cursorElement.style.width = '128px';
+    cursorElement.style.height = '128px';
+    cursorElement.style.pointerEvents = 'none';
+    cursorElement.style.zIndex = '9999';
+    cursorElement.style.transform = 'rotate(75deg)'; // Striking position
+    
+    // Add hammer SVG
+    cursorElement.innerHTML = `
+        <svg width="128" height="128" viewBox="0 0 128 128">
+            <g>
+                <rect x="48" y="16" width="32" height="64" fill="#A0522D" stroke="#654321" stroke-width="4"/>
+                <rect x="32" y="8" width="64" height="32" fill="#C0C0C0" stroke="#808080" stroke-width="4" rx="8"/>
+                <rect x="40" y="12" width="48" height="24" fill="#E0E0E0"/>
+            </g>
+        </svg>
+    `;
+    
+    document.body.appendChild(cursorElement);
+    
+    // Add striking animation
+    cursorElement.style.animation = 'cursorTeleportStrike 0.4s ease-out';
+    
+    // Remove the cursor element after animation
+    setTimeout(() => {
+        if (document.body.contains(cursorElement)) {
+            document.body.removeChild(cursorElement);
+        }
+    }, 400);
+}
+
+/**
  * Game Logic Functions
  */
 
@@ -469,6 +523,9 @@ function handleKeyDown(event) {
     
     // Add key to pressed keys set
     pressedKeys.add(key);
+    
+    // Teleport cursor to hole and show striking animation
+    teleportCursorToHole(holeIndex);
     
     // Handle the hit
     handleMoleHit(holeIndex);
