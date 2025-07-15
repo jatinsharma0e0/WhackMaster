@@ -128,31 +128,7 @@ function initializeEventListeners() {
         return false;
     });
     
-    // Add visual feedback for clicks during game
-    document.addEventListener('mousedown', function(e) {
-        if (gameState.isPlaying) {
-            // Trigger cursor animation by temporarily adding a class
-            elements.gameBoard.classList.add('hammer-strike');
-            
-            // Also add to hole if clicking on a hole
-            if (e.target.classList.contains('hole') || e.target.closest('.hole')) {
-                const hole = e.target.classList.contains('hole') ? e.target : e.target.closest('.hole');
-                hole.classList.add('hammer-strike');
-            }
-        }
-    });
-    
-    document.addEventListener('mouseup', function(e) {
-        if (gameState.isPlaying) {
-            // Remove cursor animation
-            elements.gameBoard.classList.remove('hammer-strike');
-            
-            // Also remove from all holes
-            document.querySelectorAll('.hole').forEach(hole => {
-                hole.classList.remove('hammer-strike');
-            });
-        }
-    });
+
     
 
 }
