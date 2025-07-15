@@ -33,6 +33,7 @@ export default function Game() {
 
   const [showGameOverModal, setShowGameOverModal] = useState(false);
   const [isNewHighScore, setIsNewHighScore] = useState(false);
+  const [hammerAnimations, setHammerAnimations] = useState<boolean[]>(Array(9).fill(false));
 
   const gameIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const moleTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
@@ -417,6 +418,36 @@ export default function Game() {
     setIsSoundEnabled(prev => !prev);
   }, []);
 
+  // Hammer animation functions
+  const triggerHammerAnimation = useCallback((holeIndex: number) => {
+    setHammerAnimations(prev => {
+      const newAnimations = [...prev];
+      newAnimations[holeIndex] = true;
+      return newAnimations;
+    });
+
+    // Reset animation after 300ms
+    setTimeout(() => {
+      setHammerAnimations(prev => {
+        const newAnimations = [...prev];
+        newAnimations[holeIndex] = false;
+        return newAnimations;
+      });
+    }, 300);
+  }, []);
+
+  // Numpad key mapping (1-9 to grid positions)
+  const getHoleIndexFromKey = useCallback((key: string): number => {
+    const keyMap: { [key: string]: number } = {
+      '1': 6, '2': 7, '3': 8, // Bottom row
+      '4': 3, '5': 4, '6': 5, // Middle row
+      '7': 0, '8': 1, '9': 2  // Top row
+    };
+    return keyMap[key] ?? -1;
+  }, []);
+
+
+
   const hideMole = useCallback((index: number) => {
     setMoles(prev => prev.map((mole, i) => 
       i === index ? { ...mole, isVisible: false } : mole
@@ -462,30 +493,47 @@ export default function Game() {
   }, [gameState.isPlaying, showMole]);
 
   const handleMoleHit = useCallback((index: number) => {
-    if (!gameState.isPlaying || !moles[index].isVisible) return;
+    if (!gameState.isPlaying) return;
 
-    // Play hit sound
-    playHitSound();
+    // Only play hit sound and update score if there's actually a mole
+    if (moles[index].isVisible) {
+      // Play hit sound
+      playHitSound();
 
-    // Hide mole immediately and show hit effect
-    setMoles(prev => prev.map((mole, i) => 
-      i === index 
-        ? { ...mole, isVisible: false, isHit: true, showHitEffect: true }
-        : mole
-    ));
-
-    // Update score
-    setGameState(prev => ({ ...prev, score: prev.score + 10 }));
-
-    // Hide hit effect after 500ms
-    setTimeout(() => {
+      // Hide mole immediately and show hit effect
       setMoles(prev => prev.map((mole, i) => 
         i === index 
-          ? { ...mole, isHit: false, showHitEffect: false }
+          ? { ...mole, isVisible: false, isHit: true, showHitEffect: true }
           : mole
       ));
-    }, 500);
+
+      // Update score
+      setGameState(prev => ({ ...prev, score: prev.score + 10 }));
+
+      // Hide hit effect after 500ms
+      setTimeout(() => {
+        setMoles(prev => prev.map((mole, i) => 
+          i === index 
+            ? { ...mole, isHit: false, showHitEffect: false }
+            : mole
+        ));
+      }, 500);
+    }
   }, [gameState.isPlaying, moles, playHitSound]);
+
+  // Handle numpad key presses
+  const handleKeyPress = useCallback((event: KeyboardEvent) => {
+    const key = event.key;
+    const holeIndex = getHoleIndexFromKey(key);
+    
+    if (holeIndex !== -1) {
+      // Trigger hammer animation
+      triggerHammerAnimation(holeIndex);
+      
+      // Handle mole hit if there's a mole
+      handleMoleHit(holeIndex);
+    }
+  }, [getHoleIndexFromKey, triggerHammerAnimation, handleMoleHit]);
 
   const endGame = useCallback(() => {
     // Clear all intervals and timeouts first
@@ -584,6 +632,14 @@ export default function Game() {
     }
   }, []);
 
+  // Add keyboard event listeners
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyPress);
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [handleKeyPress]);
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -637,17 +693,20 @@ export default function Game() {
         </div>
 
         {/* Game Board */}
-        <div className="bg-game-green grass-texture rounded-3xl p-8 shadow-2xl border-4 border-yellow-600 mb-8">
+        <div className="bg-game-green grass-texture rounded-3xl p-8 shadow-2xl border-4 border-yellow-600 mb-8 hammer-cursor">
           <div className="grid grid-cols-3 gap-6 max-w-md mx-auto">
             {moles.map((mole, index) => (
               <div key={index} className="relative">
-                <div className="hole w-24 h-24 md:w-32 md:h-32 rounded-full relative overflow-hidden cursor-pointer transform transition-transform hover:scale-105">
+                <div className="hole w-24 h-24 md:w-32 md:h-32 rounded-full relative overflow-hidden transform transition-transform hover:scale-105">
                   {/* Mole Element */}
                   <div 
                     className={`mole absolute inset-0 flex items-center justify-center transition-transform duration-300 ${
                       mole.isVisible ? 'translate-y-0 active' : 'translate-y-full'
                     } ${mole.isHit ? 'hit' : ''}`}
-                    onClick={() => handleMoleHit(index)}
+                    onClick={() => {
+                      triggerHammerAnimation(index);
+                      handleMoleHit(index);
+                    }}
                   >
                     <div className="w-16 h-16 md:w-20 md:h-20 bg-game-brown rounded-full border-4 border-yellow-600 flex items-center justify-center shadow-lg">
                       <div className="text-2xl md:text-3xl">🐹</div>
@@ -662,6 +721,29 @@ export default function Game() {
                   <div className="bg-game-red text-white font-bold text-xl rounded-full px-3 py-1 shadow-lg">
                     +10
                   </div>
+                </div>
+
+                {/* Hammer Animation */}
+                <div className={`absolute inset-0 flex items-center justify-center pointer-events-none ${
+                  hammerAnimations[index] ? 'hammer-animation' : ''
+                }`}>
+                  <div className="w-12 h-12 md:w-16 md:h-16 flex items-center justify-center">
+                    <svg width="40" height="40" viewBox="0 0 40 40" className="transform rotate-45">
+                      {/* Hammer handle */}
+                      <rect x="16" y="8" width="8" height="24" fill="#A0522D" stroke="#654321" strokeWidth="1"/>
+                      {/* Hammer head */}
+                      <rect x="10" y="4" width="20" height="12" fill="#C0C0C0" stroke="#808080" strokeWidth="1" rx="2"/>
+                      {/* Hammer head highlight */}
+                      <rect x="12" y="5" width="16" height="10" fill="#E0E0E0" rx="1"/>
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Burst Effect */}
+                <div className={`absolute inset-0 flex items-center justify-center pointer-events-none ${
+                  hammerAnimations[index] ? 'burst-animation' : ''
+                }`}>
+                  <div className="text-3xl md:text-4xl">💥</div>
                 </div>
               </div>
             ))}
@@ -686,7 +768,7 @@ export default function Game() {
         <Card className="border-4 border-green-500 mb-8">
           <CardContent className="p-6">
             <h2 className="font-bold text-2xl game-brown mb-4 text-center">How to Play</h2>
-            <div className="grid md:grid-cols-2 gap-4 text-gray-700">
+            <div className="grid md:grid-cols-2 gap-4 text-gray-700 mb-6">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-game-amber rounded-full flex items-center justify-center font-bold text-white">1</div>
                 <span>Click "Start Game" to begin</span>
@@ -702,6 +784,31 @@ export default function Game() {
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-game-amber rounded-full flex items-center justify-center font-bold text-white">4</div>
                 <span>Get the highest score in 30 seconds!</span>
+              </div>
+            </div>
+            
+            {/* Controls Section */}
+            <div className="border-t-2 border-gray-200 pt-4">
+              <h3 className="font-bold text-lg game-brown mb-3 text-center">Controls</h3>
+              <div className="flex justify-center gap-8">
+                <div className="text-center">
+                  <div className="font-semibold text-gray-600 mb-2">🖱️ Mouse</div>
+                  <p className="text-sm">Click on holes to whack moles</p>
+                </div>
+                <div className="text-center">
+                  <div className="font-semibold text-gray-600 mb-2">⌨️ Numpad (1-9)</div>
+                  <div className="grid grid-cols-3 gap-1 text-xs bg-gray-100 p-2 rounded">
+                    <div className="bg-white border rounded p-1 text-center">7</div>
+                    <div className="bg-white border rounded p-1 text-center">8</div>
+                    <div className="bg-white border rounded p-1 text-center">9</div>
+                    <div className="bg-white border rounded p-1 text-center">4</div>
+                    <div className="bg-white border rounded p-1 text-center">5</div>
+                    <div className="bg-white border rounded p-1 text-center">6</div>
+                    <div className="bg-white border rounded p-1 text-center">1</div>
+                    <div className="bg-white border rounded p-1 text-center">2</div>
+                    <div className="bg-white border rounded p-1 text-center">3</div>
+                  </div>
+                </div>
               </div>
             </div>
           </CardContent>
