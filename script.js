@@ -128,13 +128,17 @@ function initializeEventListeners() {
     });
     
     // Add visual feedback for clicks during game
-    document.addEventListener('click', function(e) {
+    document.addEventListener('mousedown', function(e) {
         if (gameState.isPlaying) {
             // Trigger cursor animation by temporarily adding a class
             elements.gameBoard.classList.add('hammer-strike');
-            setTimeout(() => {
-                elements.gameBoard.classList.remove('hammer-strike');
-            }, 300);
+        }
+    });
+    
+    document.addEventListener('mouseup', function(e) {
+        if (gameState.isPlaying) {
+            // Remove cursor animation
+            elements.gameBoard.classList.remove('hammer-strike');
         }
     });
 }
