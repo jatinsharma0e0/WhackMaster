@@ -512,10 +512,10 @@ function teleportCursorToHole(holeIndex) {
         cursorRestoreTimeout = null;
     }
     
-    // Hide the original cursor during teleport strike
-    elements.gameBoard.style.cursor = 'none';
+    // Keep hammer cursor during teleport strike
+    elements.gameBoard.style.cursor = 'url("assets/hammer-cursor.png") 16 16, pointer';
     document.querySelectorAll('.hole').forEach(hole => {
-        hole.style.cursor = 'none';
+        hole.style.cursor = 'url("assets/hammer-cursor.png") 16 16, pointer';
     });
     
     // Get the hole element
@@ -531,13 +531,7 @@ function teleportCursorToHole(holeIndex) {
     const tempCursor = document.createElement('div');
     tempCursor.className = 'teleport-cursor';
     tempCursor.innerHTML = `
-        <svg width="128" height="128" viewBox="0 0 128 128">
-            <g transform="rotate(75 64 64)">
-                <rect x="48" y="16" width="32" height="64" fill="#A0522D" stroke="#654321" stroke-width="4"/>
-                <rect x="32" y="8" width="64" height="32" fill="#C0C0C0" stroke="#808080" stroke-width="4" rx="8"/>
-                <rect x="40" y="12" width="48" height="24" fill="#E0E0E0"/>
-            </g>
-        </svg>
+        <img src="assets/hammer-cursor.png" width="64" height="64" style="transform: rotate(45deg) scale(1.5);">
     `;
     
     // Position the cursor at the hole center (adjust for hammer head position)
@@ -559,12 +553,12 @@ function teleportCursorToHole(holeIndex) {
 }
 
 function restoreOriginalCursor() {
-    // Restore game board cursor
-    elements.gameBoard.style.cursor = '';
+    // Restore hammer cursor on game board
+    elements.gameBoard.style.cursor = 'url("assets/hammer-cursor.png") 16 16, pointer';
     
-    // Restore hole cursors
+    // Restore hammer cursor on holes
     document.querySelectorAll('.hole').forEach(hole => {
-        hole.style.cursor = '';
+        hole.style.cursor = 'url("assets/hammer-cursor.png") 16 16, pointer';
     });
 }
 
