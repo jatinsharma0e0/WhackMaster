@@ -13,6 +13,7 @@ The game runs by simply opening index.html in any modern web browser.
 Preferred communication style: Simple, everyday language.
 Visual preferences: Custom hammer icon instead of emoji characters.
 Custom cursor: Custom hammer cursor (hammer-cursor.png) replaces default mouse cursor throughout the game.
+Hammer animations: Realistic hammer hitting animations for both mouse clicks and numpad controls with rotation effects and impact explosions.
 
 ## System Architecture
 
@@ -22,7 +23,7 @@ Custom cursor: Custom hammer cursor (hammer-cursor.png) replaces default mouse c
 - **Styling**: Custom CSS with CSS Grid, Flexbox, and CSS animations
 - **State Management**: JavaScript variables with localStorage for persistence
 - **Audio System**: Web Audio API for programmatic sound generation
-- **Keyboard Controls**: Numpad keys 1-9 for direct hole targeting without visual animations
+- **Keyboard Controls**: Numpad keys 1-9 for direct hole targeting with animated hammer strikes
 - **Responsive Design**: CSS media queries for mobile/tablet/desktop
 - **Zero Dependencies**: No build tools, package managers, or external libraries required
 

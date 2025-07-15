@@ -501,8 +501,9 @@ function handleMoleHit(index) {
     const mole = holeContainer.querySelector('.mole');
     const hole = holeContainer.querySelector('.hole');
     
-    // Create burst animation only (cursor handles hammer animation)
+    // Create burst animation and hammer animation for mouse clicks
     createBurstAnimation(holeContainer);
+    createHammerHitAnimation(index);
     
     // Only score if there's actually a mole
     if (moles[index].isVisible) {
@@ -539,8 +540,9 @@ function handleBombHit(index) {
     const bomb = holeContainer.querySelector('.bomb');
     const hole = holeContainer.querySelector('.hole');
     
-    // Create explosion animation
+    // Create explosion animation and hammer animation for mouse clicks
     createExplosionAnimation(holeContainer);
+    createHammerHitAnimation(index);
     
     // Only trigger game over if there's actually a bomb
     if (bombs[index].isVisible) {
