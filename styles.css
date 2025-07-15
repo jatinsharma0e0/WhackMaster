@@ -166,45 +166,7 @@ img, svg, canvas, video {
     color: var(--game-brown);
 }
 
-/* Universal Hammer Cursor for Game Area */
-.game-board,
-.game-board *,
-.holes-grid,
-.holes-grid *,
-.hole-container,
-.hole-container *,
-.hole,
-.hole *,
-.hole:hover,
-.hole:active,
-.hole:focus,
-.mole,
-.mole *,
-.mole:hover,
-.mole:active,
-.mole:focus {
-    cursor: url("assets/hammer-cursor.png") 16 16, pointer !important;
-}
 
-/* Additional overrides for specific states */
-.game-board:hover,
-.game-board:active,
-.game-board:focus {
-    cursor: url("assets/hammer-cursor.png") 16 16, pointer !important;
-}
-
-/* Force hammer cursor on all interactive elements */
-.game-board *:hover,
-.game-board *:active,
-.game-board *:focus,
-.holes-grid *:hover,
-.holes-grid *:active,
-.holes-grid *:focus,
-.hole-container:hover,
-.hole-container:active,
-.hole-container:focus {
-    cursor: url("assets/hammer-cursor.png") 16 16, pointer !important;
-}
 
 /* Game Board */
 .game-board {
@@ -216,6 +178,7 @@ img, svg, canvas, video {
     box-shadow: var(--shadow-lg);
     border: 4px solid #d97706;
     margin-bottom: 2rem;
+    cursor: crosshair;
     /* Prevent dragging and selection in game area */
     -webkit-user-drag: none;
     -khtml-user-drag: none;
@@ -250,6 +213,7 @@ img, svg, canvas, video {
     background: radial-gradient(circle at center, hsl(215, 28%, 35%) 0%, hsl(215, 28%, 25%) 50%, hsl(215, 28%, 15%) 100%);
     border: 4px solid var(--game-brown);
     box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
     /* Prevent dragging holes */
     -webkit-user-drag: none;
     -khtml-user-drag: none;
