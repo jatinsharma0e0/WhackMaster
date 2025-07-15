@@ -285,6 +285,7 @@ img, svg, canvas, video {
     pointer-events: none;
     animation: hammerStrike 0.4s ease-out;
     z-index: 1000;
+    transform: translate(-50%, -50%);
 }
 
 .hammer-svg {

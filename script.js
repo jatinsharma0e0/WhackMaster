@@ -416,6 +416,7 @@ function createGlobalHammerAnimation(x, y) {
     hammerDiv.className = 'global-hammer-animation';
     hammerDiv.style.left = x + 'px';
     hammerDiv.style.top = y + 'px';
+    hammerDiv.style.transform = 'translate(-50%, -50%)';
     
     const hammerSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     hammerSvg.className = 'hammer-svg';
