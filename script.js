@@ -42,9 +42,8 @@ let ambientMusic = null;
 let isKeyPressed = false;
 let pressedKeys = new Set();
 
-// Keyboard Cursor Variables
-let keyboardCursor = null;
-let currentCursorPosition = -1; // -1 means not positioned
+// Keyboard Animation Variables
+let cursorHideTimeout = null;
 
 
 // DOM Elements
@@ -95,11 +94,6 @@ function initializeElements() {
 function createGameBoard() {
     elements.holesGrid.innerHTML = '';
     
-    // Create keyboard cursor element
-    keyboardCursor = document.createElement('div');
-    keyboardCursor.className = 'keyboard-cursor';
-    keyboardCursor.style.display = 'none';
-    
     for (let i = 0; i < 9; i++) {
         const holeContainer = document.createElement('div');
         holeContainer.className = 'hole-container';
@@ -122,9 +116,6 @@ function createGameBoard() {
         holeContainer.appendChild(hole);
         elements.holesGrid.appendChild(holeContainer);
     }
-    
-    // Add keyboard cursor to the grid
-    elements.holesGrid.appendChild(keyboardCursor);
 }
 
 /**
@@ -595,42 +586,41 @@ function handleHoleClick(index) {
 }
 
 /**
- * Keyboard Cursor Functions
+ * Keyboard Animation Functions
  */
-function moveKeyboardCursorToHole(holeIndex) {
-    if (!keyboardCursor) return;
-    
+function createHammerHitAnimation(holeIndex) {
     const holeContainer = document.querySelector(`[data-index="${holeIndex}"]`);
     if (!holeContainer) return;
     
-    const holeRect = holeContainer.getBoundingClientRect();
-    const gridRect = elements.holesGrid.getBoundingClientRect();
+    // Create hammer animation element
+    const hammerDiv = document.createElement('div');
+    hammerDiv.className = 'hammer-hit-animation';
+    hammerDiv.style.backgroundImage = "url('assets/hammer-cursor-128.png')";
     
-    // Calculate position relative to the grid
-    const x = holeRect.left - gridRect.left + (holeRect.width / 2);
-    const y = holeRect.top - gridRect.top + (holeRect.height / 2);
+    holeContainer.appendChild(hammerDiv);
     
-    // Position cursor at the center of the hole
-    keyboardCursor.style.left = `${x}px`;
-    keyboardCursor.style.top = `${y}px`;
-    keyboardCursor.style.display = 'block';
-    
-    // Add animation class
-    keyboardCursor.classList.add('cursor-move');
-    
-    // Remove animation class after animation completes
+    // Remove animation after completion
     setTimeout(() => {
-        keyboardCursor.classList.remove('cursor-move');
-    }, 300);
-    
-    currentCursorPosition = holeIndex;
+        if (holeContainer.contains(hammerDiv)) {
+            holeContainer.removeChild(hammerDiv);
+        }
+    }, 400);
 }
 
-function hideKeyboardCursor() {
-    if (!keyboardCursor) return;
+function hideMouseCursor() {
+    document.body.style.cursor = 'none';
     
-    keyboardCursor.style.display = 'none';
-    currentCursorPosition = -1;
+    // Clear any existing timeout
+    if (cursorHideTimeout) {
+        clearTimeout(cursorHideTimeout);
+    }
+}
+
+function showMouseCursor() {
+    // Set timeout to show cursor after 500ms
+    cursorHideTimeout = setTimeout(() => {
+        document.body.style.cursor = '';
+    }, 500);
 }
 
 
@@ -659,8 +649,9 @@ function handleKeyDown(event) {
     // Add key to pressed keys set
     pressedKeys.add(key);
     
-    // Move cursor to the target hole
-    moveKeyboardCursorToHole(holeIndex);
+    // Hide mouse cursor and show hammer animation
+    hideMouseCursor();
+    createHammerHitAnimation(holeIndex);
     
     // Handle the hit (check for bombs first)
     if (bombs[holeIndex].isVisible) {
@@ -683,8 +674,8 @@ function handleKeyUp(event) {
     // Remove key from pressed keys set
     pressedKeys.delete(key);
     
-    // Hide cursor when key is released
-    hideKeyboardCursor();
+    // Show mouse cursor after delay
+    showMouseCursor();
     
     // Prevent default to avoid browser behavior
     event.preventDefault();
