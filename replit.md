@@ -7,6 +7,7 @@ Successfully converted from React/TypeScript to pure HTML5, CSS3, and JavaScript
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Visual preferences: Custom hammer icon instead of emoji characters.
 
 ## System Architecture
 
@@ -88,6 +89,7 @@ Preferred communication style: Simple, everyday language.
 ├── styles.css              # All styling and animations (14KB)  
 ├── script.js               # Game logic and audio system (24KB)
 ├── assets/
+│   ├── hammer-icon.jpg         # Custom colorful hammer icon for title
 │   └── sounds/
 │       ├── hit.wav                # Hit sound effect (9KB)
 │       ├── mole_pop.wav           # Mole pop sound (13KB) 

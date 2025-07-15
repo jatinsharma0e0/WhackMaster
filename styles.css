@@ -82,6 +82,22 @@ img, svg, canvas, video {
     color: var(--game-brown);
     animation: bounceIn 0.5s ease-out;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.hammer-icon {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    animation: hammerBounce 2s ease-in-out infinite;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+@keyframes hammerBounce {
+    0%, 100% { transform: rotate(-5deg) scale(1); }
+    50% { transform: rotate(5deg) scale(1.1); }
 }
 
 .sound-toggle {
