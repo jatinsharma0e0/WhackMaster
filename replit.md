@@ -13,7 +13,7 @@ The game runs by simply opening index.html in any modern web browser.
 Preferred communication style: Simple, everyday language.
 Visual preferences: Custom hammer icon instead of emoji characters.
 Custom cursor: Custom hammer cursor (hammer-cursor.png) replaces default mouse cursor throughout the game.
-Cursor animation: The actual cursor rotates 30 degrees anticlockwise on any click anywhere on the page, creating a responsive and immersive hammer-hitting experience across the entire canvas.
+Cursor animation: The actual cursor rotates 30 degrees anticlockwise and scales up to 1.3x size on any click anywhere on the page, matching the numpad hammer animation style for a consistent hitting experience across the entire canvas.
 Hammer animations: Realistic hammer hitting animations for numpad controls only (keys 1-9) with rotation effects and impact explosions. Mouse clicks show only burst/explosion effects without hammer animation.
 
 ## System Architecture
