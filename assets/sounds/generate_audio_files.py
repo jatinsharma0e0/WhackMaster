@@ -228,7 +228,7 @@ def generate_ambient_sound():
             note_sound = note_sound * envelope
             sound[start_sample:end_sample] += note_sound
     
-    # Add soft bass
+    # Add soft bass with smoother transitions
     bass_times = [0, 2, 4, 6]
     bass_freqs = [131, 165, 196, 147]  # C3, E3, G3, D3
     
@@ -240,7 +240,14 @@ def generate_ambient_sound():
         
         if end_sample <= len(sound):
             bass_t = t[start_sample:end_sample] - start_time
-            bass_sound = np.sin(2 * np.pi * freq * bass_t) * 0.02
+            bass_sound = np.sin(2 * np.pi * freq * bass_t) * 0.015
+            
+            # Apply smooth fade in/out to eliminate buzzing
+            fade_samples = int(0.1 * sample_rate)  # 100ms fade
+            if len(bass_sound) > 2 * fade_samples:
+                bass_sound[:fade_samples] *= np.linspace(0, 1, fade_samples)
+                bass_sound[-fade_samples:] *= np.linspace(1, 0, fade_samples)
+            
             sound[start_sample:end_sample] += bass_sound
     
     # Add bell-like accompaniment
