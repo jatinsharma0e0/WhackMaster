@@ -179,7 +179,7 @@ img, svg, canvas, video {
     box-shadow: var(--shadow-lg);
     border: 4px solid #d97706;
     margin-bottom: 2rem;
-    cursor: url('assets/hammer-cursor.png') 16 16, crosshair;
+    cursor: url('assets/hammer-cursor.png') 16 16, pointer;
     /* Prevent dragging and selection in game area */
     -webkit-user-drag: none;
     -khtml-user-drag: none;
@@ -196,12 +196,14 @@ img, svg, canvas, video {
     gap: 1.5rem;
     max-width: 384px;
     margin: 0 auto;
+    cursor: url('assets/hammer-cursor.png') 16 16, pointer;
 }
 
 .hole-container {
     position: relative;
     width: 96px;
     height: 96px;
+    cursor: url('assets/hammer-cursor.png') 16 16, pointer;
 }
 
 .hole {
@@ -253,6 +255,7 @@ img, svg, canvas, video {
     box-shadow: var(--shadow);
     transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
     opacity: 0;
+    cursor: url('assets/hammer-cursor.png') 16 16, pointer;
     /* Prevent dragging moles */
     -webkit-user-drag: none;
     -khtml-user-drag: none;
@@ -289,6 +292,7 @@ img, svg, canvas, video {
     box-shadow: var(--shadow);
     transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
     opacity: 0;
+    cursor: url('assets/hammer-cursor.png') 16 16, pointer;
     /* Prevent dragging bombs */
     -webkit-user-drag: none;
     -khtml-user-drag: none;
