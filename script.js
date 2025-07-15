@@ -599,7 +599,22 @@ function createHammerHitAnimation(holeIndex) {
     
     holeContainer.appendChild(hammerDiv);
     
-    // Remove animation after completion
+    // Create impact effect at the moment of hit
+    setTimeout(() => {
+        const impactDiv = document.createElement('div');
+        impactDiv.className = 'hammer-impact-effect';
+        impactDiv.textContent = '💥';
+        holeContainer.appendChild(impactDiv);
+        
+        // Remove impact effect
+        setTimeout(() => {
+            if (holeContainer.contains(impactDiv)) {
+                holeContainer.removeChild(impactDiv);
+            }
+        }, 200);
+    }, 240); // Show impact at 60% of animation (0.4s * 0.6 = 240ms)
+    
+    // Remove hammer animation after completion
     setTimeout(() => {
         if (holeContainer.contains(hammerDiv)) {
             holeContainer.removeChild(hammerDiv);
