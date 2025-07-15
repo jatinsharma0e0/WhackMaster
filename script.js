@@ -127,10 +127,14 @@ function initializeEventListeners() {
         return false;
     });
     
-    // Add global click animation during game
+    // Add visual feedback for clicks during game
     document.addEventListener('click', function(e) {
         if (gameState.isPlaying) {
-            createGlobalHammerAnimation(e.clientX, e.clientY);
+            // Trigger cursor animation by temporarily adding a class
+            elements.gameBoard.classList.add('hammer-strike');
+            setTimeout(() => {
+                elements.gameBoard.classList.remove('hammer-strike');
+            }, 300);
         }
     });
 }
@@ -357,116 +361,7 @@ function spawnMoles() {
     moleTimeouts.push(initialTimeout);
 }
 
-function createHammerAnimation(holeContainer) {
-    const hammerDiv = document.createElement('div');
-    hammerDiv.className = 'hammer-animation';
-    
-    const hammerSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    hammerSvg.className = 'hammer-svg';
-    hammerSvg.setAttribute('width', '128');
-    hammerSvg.setAttribute('height', '128');
-    hammerSvg.setAttribute('viewBox', '0 0 128 128');
-    
-    // Hammer handle
-    const handle = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    handle.setAttribute('x', '48');
-    handle.setAttribute('y', '24');
-    handle.setAttribute('width', '32');
-    handle.setAttribute('height', '72');
-    handle.setAttribute('fill', '#A0522D');
-    handle.setAttribute('stroke', '#654321');
-    handle.setAttribute('stroke-width', '4');
-    
-    // Hammer head
-    const head = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    head.setAttribute('x', '32');
-    head.setAttribute('y', '12');
-    head.setAttribute('width', '64');
-    head.setAttribute('height', '36');
-    head.setAttribute('fill', '#C0C0C0');
-    head.setAttribute('stroke', '#808080');
-    head.setAttribute('stroke-width', '4');
-    head.setAttribute('rx', '6');
-    
-    // Hammer head highlight
-    const highlight = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    highlight.setAttribute('x', '36');
-    highlight.setAttribute('y', '15');
-    highlight.setAttribute('width', '56');
-    highlight.setAttribute('height', '30');
-    highlight.setAttribute('fill', '#E0E0E0');
-    highlight.setAttribute('rx', '3');
-    
-    hammerSvg.appendChild(handle);
-    hammerSvg.appendChild(head);
-    hammerSvg.appendChild(highlight);
-    hammerDiv.appendChild(hammerSvg);
-    
-    holeContainer.appendChild(hammerDiv);
-    
-    setTimeout(() => {
-        if (holeContainer.contains(hammerDiv)) {
-            holeContainer.removeChild(hammerDiv);
-        }
-    }, 400);
-}
 
-function createGlobalHammerAnimation(x, y) {
-    const hammerDiv = document.createElement('div');
-    hammerDiv.className = 'global-hammer-animation';
-    hammerDiv.style.left = x + 'px';
-    hammerDiv.style.top = y + 'px';
-    hammerDiv.style.transform = 'translate(-50%, -50%)';
-    
-    const hammerSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    hammerSvg.className = 'hammer-svg';
-    hammerSvg.setAttribute('width', '128');
-    hammerSvg.setAttribute('height', '128');
-    hammerSvg.setAttribute('viewBox', '0 0 128 128');
-    
-    // Hammer handle
-    const handle = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    handle.setAttribute('x', '48');
-    handle.setAttribute('y', '24');
-    handle.setAttribute('width', '32');
-    handle.setAttribute('height', '72');
-    handle.setAttribute('fill', '#A0522D');
-    handle.setAttribute('stroke', '#654321');
-    handle.setAttribute('stroke-width', '4');
-    
-    // Hammer head
-    const head = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    head.setAttribute('x', '32');
-    head.setAttribute('y', '12');
-    head.setAttribute('width', '64');
-    head.setAttribute('height', '36');
-    head.setAttribute('fill', '#C0C0C0');
-    head.setAttribute('stroke', '#808080');
-    head.setAttribute('stroke-width', '4');
-    head.setAttribute('rx', '6');
-    
-    // Hammer head highlight
-    const highlight = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    highlight.setAttribute('x', '36');
-    highlight.setAttribute('y', '15');
-    highlight.setAttribute('width', '56');
-    highlight.setAttribute('height', '30');
-    highlight.setAttribute('fill', '#E0E0E0');
-    highlight.setAttribute('rx', '3');
-    
-    hammerSvg.appendChild(handle);
-    hammerSvg.appendChild(head);
-    hammerSvg.appendChild(highlight);
-    hammerDiv.appendChild(hammerSvg);
-    
-    document.body.appendChild(hammerDiv);
-    
-    setTimeout(() => {
-        if (document.body.contains(hammerDiv)) {
-            document.body.removeChild(hammerDiv);
-        }
-    }, 400);
-}
 
 function createBurstAnimation(holeContainer) {
     const burstDiv = document.createElement('div');
@@ -503,8 +398,7 @@ function handleMoleHit(index) {
     const mole = holeContainer.querySelector('.mole');
     const hole = holeContainer.querySelector('.hole');
     
-    // Create hammer and burst animations
-    createHammerAnimation(holeContainer);
+    // Create burst animation only (cursor handles hammer animation)
     createBurstAnimation(holeContainer);
     
     // Only score if there's actually a mole

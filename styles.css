@@ -170,7 +170,8 @@ img, svg, canvas, video {
 }
 
 .game-board:active {
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128' viewBox='0 0 128 128'%3E%3Cg transform='rotate(55 64 64)'%3E%3Crect x='48' y='16' width='32' height='64' fill='%23A0522D' stroke='%23654321' stroke-width='4'/%3E%3Crect x='32' y='8' width='64' height='32' fill='%23C0C0C0' stroke='%23808080' stroke-width='4' rx='8'/%3E%3Crect x='40' y='12' width='48' height='24' fill='%23E0E0E0'/%3E%3C/g%3E%3C/svg%3E") 64 64, auto;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128' viewBox='0 0 128 128'%3E%3Cg transform='rotate(65 64 64)'%3E%3Crect x='48' y='16' width='32' height='64' fill='%23A0522D' stroke='%23654321' stroke-width='4'/%3E%3Crect x='32' y='8' width='64' height='32' fill='%23C0C0C0' stroke='%23808080' stroke-width='4' rx='8'/%3E%3Crect x='40' y='12' width='48' height='24' fill='%23E0E0E0'/%3E%3C/g%3E%3C/svg%3E") 64 64, auto;
+    animation: cursorHammerStrike 0.3s ease-out;
 }
 
 .holes-grid {
@@ -195,6 +196,7 @@ img, svg, canvas, video {
     overflow: hidden;
     transition: transform 0.2s;
     cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128' viewBox='0 0 128 128'%3E%3Cg transform='rotate(55 64 64)'%3E%3Crect x='48' y='16' width='32' height='64' fill='%23A0522D' stroke='%23654321' stroke-width='4'/%3E%3Crect x='32' y='8' width='64' height='32' fill='%23C0C0C0' stroke='%23808080' stroke-width='4' rx='8'/%3E%3Crect x='40' y='12' width='48' height='24' fill='%23E0E0E0'/%3E%3C/g%3E%3C/svg%3E") 64 64, pointer;
+    transition: all 0.1s ease;
     background: radial-gradient(circle at center, hsl(215, 28%, 35%) 0%, hsl(215, 28%, 25%) 50%, hsl(215, 28%, 15%) 100%);
     border: 4px solid var(--game-brown);
     box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.3);
@@ -279,13 +281,10 @@ img, svg, canvas, video {
     z-index: 5;
 }
 
-/* Global hammer animation for any click */
-.global-hammer-animation {
-    position: fixed;
-    pointer-events: none;
-    animation: hammerStrike 0.4s ease-out;
-    z-index: 1000;
-    transform: translate(-50%, -50%);
+/* Hammer strike animation class */
+.game-board.hammer-strike {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128' viewBox='0 0 128 128'%3E%3Cg transform='rotate(65 64 64)'%3E%3Crect x='48' y='16' width='32' height='64' fill='%23A0522D' stroke='%23654321' stroke-width='4'/%3E%3Crect x='32' y='8' width='64' height='32' fill='%23C0C0C0' stroke='%23808080' stroke-width='4' rx='8'/%3E%3Crect x='40' y='12' width='48' height='24' fill='%23E0E0E0'/%3E%3C/g%3E%3C/svg%3E") 64 64, auto !important;
+    animation: cursorHammerStrike 0.3s ease-out;
 }
 
 .hammer-svg {
@@ -635,6 +634,21 @@ img, svg, canvas, video {
     100% {
         transform: translate(-50%, -40%) scale(0.9) rotate(55deg);
         opacity: 0;
+    }
+}
+
+@keyframes cursorHammerStrike {
+    0% {
+        transform: rotate(35deg) scale(1);
+    }
+    30% {
+        transform: rotate(25deg) scale(1.1);
+    }
+    60% {
+        transform: rotate(65deg) scale(1.2);
+    }
+    100% {
+        transform: rotate(55deg) scale(1);
     }
 }
 
