@@ -30,7 +30,7 @@ body {
     background-position: center;
     pointer-events: none;
     z-index: 10000;
-    transform: translate(-50px, 0);
+    transform: translate(-50px, -45px);
     opacity: 1;
     transition: transform 0.3s ease-out;
 }
