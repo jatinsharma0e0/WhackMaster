@@ -17,6 +17,7 @@ Visual preferences: Custom hammer icon instead of emoji characters.
 - **Styling**: Custom CSS with CSS Grid, Flexbox, and CSS animations
 - **State Management**: JavaScript variables with localStorage for persistence
 - **Audio System**: Web Audio API for programmatic sound generation
+- **Keyboard Controls**: Numpad keys 1-9 for direct hole targeting without visual animations
 - **Responsive Design**: CSS media queries for mobile/tablet/desktop
 - **Zero Dependencies**: No build tools, package managers, or external libraries required
 

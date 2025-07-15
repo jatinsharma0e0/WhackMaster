@@ -27,7 +27,7 @@ let backgroundMusic = null;
 let ambientMusic = null;
 let isKeyPressed = false;
 let pressedKeys = new Set();
-let cursorRestoreTimeout = null;
+
 
 // DOM Elements
 let elements = {};
@@ -262,59 +262,7 @@ function toggleSound() {
     }
 }
 
-/**
- * Cursor Teleportation Functions
- */
 
-function teleportCursorToHole(holeIndex) {
-    if (!gameState.isPlaying) return;
-    
-    const holeContainer = document.querySelector(`[data-index="${holeIndex}"]`);
-    if (!holeContainer) return;
-    
-    const hole = holeContainer.querySelector('.hole');
-    if (!hole) return;
-    
-    // Get hole position
-    const rect = hole.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    
-    // Create a temporary cursor element that appears at the hole
-    const cursorElement = document.createElement('div');
-    cursorElement.className = 'teleported-cursor';
-    cursorElement.style.position = 'fixed';
-    cursorElement.style.left = (centerX - 64) + 'px'; // Center the 128px cursor
-    cursorElement.style.top = (centerY - 64) + 'px';
-    cursorElement.style.width = '128px';
-    cursorElement.style.height = '128px';
-    cursorElement.style.pointerEvents = 'none';
-    cursorElement.style.zIndex = '9999';
-    cursorElement.style.transform = 'rotate(75deg)'; // Striking position
-    
-    // Add hammer SVG
-    cursorElement.innerHTML = `
-        <svg width="128" height="128" viewBox="0 0 128 128">
-            <g>
-                <rect x="48" y="16" width="32" height="64" fill="#A0522D" stroke="#654321" stroke-width="4"/>
-                <rect x="32" y="8" width="64" height="32" fill="#C0C0C0" stroke="#808080" stroke-width="4" rx="8"/>
-                <rect x="40" y="12" width="48" height="24" fill="#E0E0E0"/>
-            </g>
-        </svg>
-    `;
-    
-    document.body.appendChild(cursorElement);
-    
-    // Add striking animation
-    cursorElement.style.animation = 'cursorTeleportStrike 0.4s ease-out';
-    
-    // Remove the cursor element after animation
-    setTimeout(() => {
-        if (document.body.contains(cursorElement)) {
-            document.body.removeChild(cursorElement);
-        }
-    }, 400);
-}
 
 /**
  * Game Logic Functions
@@ -481,70 +429,9 @@ function handleHoleClick(index) {
     handleMoleHit(index);
 }
 
-function teleportCursorToHole(holeIndex) {
-    if (!gameState.isPlaying) return;
-    
-    // Clear any existing cursor restore timeout to prevent conflicts
-    if (cursorRestoreTimeout) {
-        clearTimeout(cursorRestoreTimeout);
-        cursorRestoreTimeout = null;
-    }
-    
-    // Hide the original cursor during teleport strike
-    elements.gameBoard.style.cursor = 'none';
-    document.querySelectorAll('.hole').forEach(hole => {
-        hole.style.cursor = 'none';
-    });
-    
-    // Get the hole element
-    const holeContainer = document.querySelector(`[data-index="${holeIndex}"]`);
-    if (!holeContainer) return;
-    
-    // Get hole position
-    const rect = holeContainer.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    
-    // Create a temporary cursor element to show the striking animation
-    const tempCursor = document.createElement('div');
-    tempCursor.className = 'teleport-cursor';
-    tempCursor.innerHTML = `
-        <svg width="128" height="128" viewBox="0 0 128 128">
-            <g transform="rotate(75 64 64)">
-                <rect x="48" y="16" width="32" height="64" fill="#A0522D" stroke="#654321" stroke-width="4"/>
-                <rect x="32" y="8" width="64" height="32" fill="#C0C0C0" stroke="#808080" stroke-width="4" rx="8"/>
-                <rect x="40" y="12" width="48" height="24" fill="#E0E0E0"/>
-            </g>
-        </svg>
-    `;
-    
-    // Position the cursor at the hole center (adjust for hammer head position)
-    tempCursor.style.position = 'fixed';
-    tempCursor.style.left = (centerX - 125) + 'px';
-    tempCursor.style.top = (centerY - 15) + 'px';
-    tempCursor.style.pointerEvents = 'none';
-    tempCursor.style.zIndex = '9999';
-    
-    // Add to body
-    document.body.appendChild(tempCursor);
-    
-    // Remove after animation (but don't restore cursor here)
-    setTimeout(() => {
-        if (document.body.contains(tempCursor)) {
-            document.body.removeChild(tempCursor);
-        }
-    }, 300);
-}
 
-function restoreOriginalCursor() {
-    // Restore game board cursor
-    elements.gameBoard.style.cursor = '';
-    
-    // Restore hole cursors
-    document.querySelectorAll('.hole').forEach(hole => {
-        hole.style.cursor = '';
-    });
-}
+
+
 
 function handleKeyDown(event) {
     const key = event.key;
@@ -568,8 +455,7 @@ function handleKeyDown(event) {
     // Add key to pressed keys set
     pressedKeys.add(key);
     
-    // Teleport cursor to hole and show striking animation
-    teleportCursorToHole(holeIndex);
+    // Simply handle the hit without animation
     
     // Handle the hit
     handleMoleHit(holeIndex);
@@ -588,16 +474,7 @@ function handleKeyUp(event) {
     // Remove key from pressed keys set
     pressedKeys.delete(key);
     
-    // Clear any existing cursor restore timeout
-    if (cursorRestoreTimeout) {
-        clearTimeout(cursorRestoreTimeout);
-    }
-    
-    // Restore cursor after 2 seconds delay
-    cursorRestoreTimeout = setTimeout(() => {
-        restoreOriginalCursor();
-        cursorRestoreTimeout = null;
-    }, 2000);
+
     
     // Prevent default to avoid browser behavior
     event.preventDefault();
