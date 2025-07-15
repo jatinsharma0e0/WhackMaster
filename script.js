@@ -42,6 +42,10 @@ let ambientMusic = null;
 let isKeyPressed = false;
 let pressedKeys = new Set();
 
+// Keyboard Cursor Variables
+let keyboardCursor = null;
+let currentCursorPosition = -1; // -1 means not positioned
+
 
 // DOM Elements
 let elements = {};
@@ -91,6 +95,11 @@ function initializeElements() {
 function createGameBoard() {
     elements.holesGrid.innerHTML = '';
     
+    // Create keyboard cursor element
+    keyboardCursor = document.createElement('div');
+    keyboardCursor.className = 'keyboard-cursor';
+    keyboardCursor.style.display = 'none';
+    
     for (let i = 0; i < 9; i++) {
         const holeContainer = document.createElement('div');
         holeContainer.className = 'hole-container';
@@ -113,6 +122,9 @@ function createGameBoard() {
         holeContainer.appendChild(hole);
         elements.holesGrid.appendChild(holeContainer);
     }
+    
+    // Add keyboard cursor to the grid
+    elements.holesGrid.appendChild(keyboardCursor);
 }
 
 /**
@@ -582,6 +594,45 @@ function handleHoleClick(index) {
     }
 }
 
+/**
+ * Keyboard Cursor Functions
+ */
+function moveKeyboardCursorToHole(holeIndex) {
+    if (!keyboardCursor) return;
+    
+    const holeContainer = document.querySelector(`[data-index="${holeIndex}"]`);
+    if (!holeContainer) return;
+    
+    const holeRect = holeContainer.getBoundingClientRect();
+    const gridRect = elements.holesGrid.getBoundingClientRect();
+    
+    // Calculate position relative to the grid
+    const x = holeRect.left - gridRect.left + (holeRect.width / 2);
+    const y = holeRect.top - gridRect.top + (holeRect.height / 2);
+    
+    // Position cursor at the center of the hole
+    keyboardCursor.style.left = `${x}px`;
+    keyboardCursor.style.top = `${y}px`;
+    keyboardCursor.style.display = 'block';
+    
+    // Add animation class
+    keyboardCursor.classList.add('cursor-move');
+    
+    // Remove animation class after animation completes
+    setTimeout(() => {
+        keyboardCursor.classList.remove('cursor-move');
+    }, 300);
+    
+    currentCursorPosition = holeIndex;
+}
+
+function hideKeyboardCursor() {
+    if (!keyboardCursor) return;
+    
+    keyboardCursor.style.display = 'none';
+    currentCursorPosition = -1;
+}
+
 
 
 
@@ -608,7 +659,8 @@ function handleKeyDown(event) {
     // Add key to pressed keys set
     pressedKeys.add(key);
     
-    // Simply handle the hit without animation
+    // Move cursor to the target hole
+    moveKeyboardCursorToHole(holeIndex);
     
     // Handle the hit (check for bombs first)
     if (bombs[holeIndex].isVisible) {
@@ -631,7 +683,8 @@ function handleKeyUp(event) {
     // Remove key from pressed keys set
     pressedKeys.delete(key);
     
-
+    // Hide cursor when key is released
+    hideKeyboardCursor();
     
     // Prevent default to avoid browser behavior
     event.preventDefault();
