@@ -109,7 +109,6 @@ Audio feedback: Hammer hitting sound plays for all clicks and numpad key presses
 │       ├── explosion.wav          # Bomb explosion sound effect (35KB)
 │       ├── hammer_hit.wav         # Hammer hitting sound for clicks and numpad (13KB)
 │       ├── button_click.wav       # Button click sound for UI interactions (7KB)
-│       ├── ting.wav               # Special metallic ting sound for successful mole hits (22KB)
 │       └── generate_audio_files.py # Script to regenerate audio files
 └── README.md               # Documentation
 ```

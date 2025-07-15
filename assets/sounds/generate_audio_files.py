@@ -228,7 +228,7 @@ def generate_ambient_sound():
             note_sound = note_sound * envelope
             sound[start_sample:end_sample] += note_sound
     
-    # Add soft bass with smoother transitions
+    # Add soft bass
     bass_times = [0, 2, 4, 6]
     bass_freqs = [131, 165, 196, 147]  # C3, E3, G3, D3
     
@@ -240,14 +240,7 @@ def generate_ambient_sound():
         
         if end_sample <= len(sound):
             bass_t = t[start_sample:end_sample] - start_time
-            bass_sound = np.sin(2 * np.pi * freq * bass_t) * 0.015
-            
-            # Apply smooth fade in/out to eliminate buzzing
-            fade_samples = int(0.1 * sample_rate)  # 100ms fade
-            if len(bass_sound) > 2 * fade_samples:
-                bass_sound[:fade_samples] *= np.linspace(0, 1, fade_samples)
-                bass_sound[-fade_samples:] *= np.linspace(1, 0, fade_samples)
-            
+            bass_sound = np.sin(2 * np.pi * freq * bass_t) * 0.02
             sound[start_sample:end_sample] += bass_sound
     
     # Add bell-like accompaniment
@@ -432,66 +425,6 @@ def generate_button_click_sound():
     
     write_wav('button_click.wav', samples)
 
-def generate_ting_sound():
-    """Generate ting sound - bright metallic chime for successful mole hits"""
-    sample_rate = 44100
-    duration = 0.5
-    samples = np.zeros(int(sample_rate * duration))
-    
-    # Generate bright metallic ting - bell-like sound
-    ting_duration = 0.1
-    ting_samples = int(sample_rate * ting_duration)
-    
-    t = np.linspace(0, ting_duration, ting_samples)
-    
-    # Primary frequencies for bright metallic ting
-    freq1 = 1800  # Bright fundamental
-    freq2 = 2400  # First harmonic
-    freq3 = 3200  # Second harmonic
-    freq4 = 4000  # Third harmonic
-    
-    # Generate ting with harmonics
-    ting = (np.sin(2 * np.pi * freq1 * t) * 0.5 +
-            np.sin(2 * np.pi * freq2 * t) * 0.3 +
-            np.sin(2 * np.pi * freq3 * t) * 0.15 +
-            np.sin(2 * np.pi * freq4 * t) * 0.05)
-    
-    # Bell-like attack and decay envelope
-    attack_samples = int(sample_rate * 0.01)  # Very quick attack
-    decay_samples = ting_samples - attack_samples
-    
-    envelope = np.ones(ting_samples)
-    if attack_samples > 0:
-        envelope[:attack_samples] = np.linspace(0, 1, attack_samples)
-    if decay_samples > 0:
-        envelope[attack_samples:] = np.exp(-np.linspace(0, 6, decay_samples))
-    
-    ting = ting * envelope
-    
-    # Add reverb tail for sparkle effect
-    reverb_start = ting_samples
-    reverb_duration = 0.4
-    reverb_samples = int(sample_rate * reverb_duration)
-    reverb_t = np.linspace(0, reverb_duration, reverb_samples)
-    
-    # Generate sparkling reverb with higher frequencies
-    reverb = (np.sin(2 * np.pi * freq1 * 0.9 * reverb_t) * 0.15 +
-              np.sin(2 * np.pi * freq2 * 0.8 * reverb_t) * 0.1 +
-              np.sin(2 * np.pi * freq3 * 0.7 * reverb_t) * 0.05)
-    
-    # Exponential decay for reverb
-    reverb_envelope = np.exp(-reverb_t * 4)
-    reverb = reverb * reverb_envelope
-    
-    # Combine ting and reverb
-    samples[:ting_samples] += ting
-    samples[reverb_start:reverb_start+reverb_samples] += reverb
-    
-    # Normalize
-    samples = samples / np.max(np.abs(samples)) * 0.8
-    
-    write_wav('ting.wav', samples)
-
 if __name__ == "__main__":
     print("Generating audio files...")
     
@@ -518,8 +451,5 @@ if __name__ == "__main__":
     
     generate_button_click_sound()
     print("✓ Generated button_click.wav")
-    
-    generate_ting_sound()
-    print("✓ Generated ting.wav")
     
     print("All audio files generated successfully!")
