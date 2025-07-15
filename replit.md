@@ -12,7 +12,7 @@ The game runs by simply opening index.html in any modern web browser.
 
 Preferred communication style: Simple, everyday language.
 Visual preferences: Custom hammer icon instead of emoji characters.
-Custom cursor: Custom hammer cursor (hammer-cursor.png) replaces default mouse cursor throughout the game with hotspot positioned at the hammer head (64, 32).
+Custom cursor: Custom hammer cursor (hammer-cursor.png) replaces default mouse cursor throughout the game with hotspot positioned at the hammer head edge (0, 32).
 Cursor animation: Uses the exact same hammer hitting animation as numpad controls on any click anywhere on the page. The hammer appears at click position, performs the full hitting motion with rotation and scaling effects, and shows an impact explosion, creating a consistent hitting experience across the entire canvas.
 Hammer animations: Realistic hammer hitting animations for both numpad controls (keys 1-9) and mouse clicks anywhere on the page, with rotation effects and impact explosions. All interactions now use the same consistent hammer animation system.
 
