@@ -663,14 +663,15 @@ function createCursorOverlay() {
     cursorOverlay.className = 'cursor-rotation-overlay';
     document.body.appendChild(cursorOverlay);
     
+    // Hide default cursor and show custom cursor
+    document.body.classList.add('custom-cursor-active');
+    
     // Track mouse movement
     document.addEventListener('mousemove', updateOverlayPosition);
     
-    // Add rotation animation only when clicking on holes
-    elements.holesGrid.addEventListener('mousedown', (e) => {
-        if (e.target.closest('.hole')) {
-            animateCursorRotation();
-        }
+    // Add rotation animation on any click within the game area
+    document.addEventListener('mousedown', (e) => {
+        animateCursorRotation();
     });
 }
 
@@ -683,14 +684,12 @@ function updateOverlayPosition(e) {
 
 function animateCursorRotation() {
     if (cursorOverlay) {
-        // Hide default cursor and show animated overlay
-        document.body.classList.add('animating-cursor');
-        cursorOverlay.classList.add('active');
+        // Add rotation animation to the cursor
+        cursorOverlay.classList.add('rotating');
         
-        // Restore default cursor after animation
+        // Remove rotation class after animation completes
         setTimeout(() => {
-            document.body.classList.remove('animating-cursor');
-            cursorOverlay.classList.remove('active');
+            cursorOverlay.classList.remove('rotating');
         }, 300);
     }
 }

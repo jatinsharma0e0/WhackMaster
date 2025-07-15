@@ -19,7 +19,7 @@ body {
     cursor: url('assets/hammer-cursor-128.png') 64 64, pointer;
 }
 
-/* Cursor rotation effect - only shows during animation */
+/* Custom cursor overlay - always visible, follows mouse */
 .cursor-rotation-overlay {
     position: fixed;
     width: 128px;
@@ -31,17 +31,16 @@ body {
     pointer-events: none;
     z-index: 10000;
     transform: translate(-50%, -50%);
-    opacity: 0;
-    transition: opacity 0.1s ease-out;
+    opacity: 1;
+    transition: transform 0.3s ease-out;
 }
 
-.cursor-rotation-overlay.active {
-    opacity: 1;
+.cursor-rotation-overlay.rotating {
     animation: cursorRotate 0.3s ease-out forwards;
 }
 
-/* Hide default cursor only during animation */
-body.animating-cursor {
+/* Hide default cursor when using custom cursor */
+body.custom-cursor-active {
     cursor: none;
 }
 
