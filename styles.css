@@ -19,7 +19,7 @@ body {
     /* Firefox */
     -ms-user-select: none;
     /* IE/Edge */
-    cursor: url('assets/hammer-cursor-128.png') 50 50, pointer;
+    cursor: url('assets/hammer-cursor-128.png') 299 299, pointer;
 }
 
 /* Custom cursor overlay - always visible, follows mouse */
@@ -149,7 +149,7 @@ video {
     width: 48px;
     height: 48px;
     font-size: 1.5rem;
-    cursor: url('assets/hammer-cursor-128.png') 50 50, pointer;
+    cursor: url('assets/hammer-cursor-128.png') 299 299, pointer;
     transition: all 0.2s;
     display: flex;
     align-items: center;
@@ -220,7 +220,7 @@ video {
     box-shadow: var(--shadow-lg);
     border: 4px solid #d97706;
     margin-bottom: 2rem;
-    cursor: url('assets/hammer-cursor-128.png') 50 50, pointer;
+    cursor: url('assets/hammer-cursor-128.png') 299 299, pointer;
     /* Prevent dragging and selection in game area */
     -webkit-user-drag: none;
     -khtml-user-drag: none;
@@ -237,14 +237,14 @@ video {
     gap: 1.5rem;
     max-width: 384px;
     margin: 0 auto;
-    cursor: url('assets/hammer-cursor-128.png') 50 50, pointer;
+    cursor: url('assets/hammer-cursor-128.png') 299 299, pointer;
 }
 
 .hole-container {
     position: relative;
     width: 96px;
     height: 96px;
-    cursor: url('assets/hammer-cursor-128.png') 50 50, pointer;
+    cursor: url('assets/hammer-cursor-128.png') 299 299, pointer;
 }
 
 .hole {
@@ -257,7 +257,7 @@ video {
     background: radial-gradient(circle at center, hsl(215, 28%, 35%) 0%, hsl(215, 28%, 25%) 50%, hsl(215, 28%, 15%) 100%);
     border: 4px solid var(--game-brown);
     box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.3);
-    cursor: url('assets/hammer-cursor-128.png') 50 50, pointer;
+    cursor: url('assets/hammer-cursor-128.png') 299 299, pointer;
     /* Prevent dragging holes */
     -webkit-user-drag: none;
     -khtml-user-drag: none;
@@ -296,7 +296,7 @@ video {
     box-shadow: var(--shadow);
     transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
     opacity: 0;
-    cursor: url('assets/hammer-cursor-128.png') 50 50, pointer;
+    cursor: url('assets/hammer-cursor-128.png') 299 299, pointer;
     /* Prevent dragging moles */
     -webkit-user-drag: none;
     -khtml-user-drag: none;
@@ -333,7 +333,7 @@ video {
     box-shadow: var(--shadow);
     transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
     opacity: 0;
-    cursor: url('assets/hammer-cursor-128.png') 50 50, pointer;
+    cursor: url('assets/hammer-cursor-128.png') 299 299, pointer;
     /* Prevent dragging bombs */
     -webkit-user-drag: none;
     -khtml-user-drag: none;
@@ -429,7 +429,7 @@ video {
     padding: 1rem 2rem;
     border: 4px solid #d97706;
     border-radius: 1rem;
-    cursor: url('assets/hammer-cursor-128.png') 50 50, pointer;
+    cursor: url('assets/hammer-cursor-128.png') 299 299, pointer;
     transition: all 0.2s;
     box-shadow: var(--shadow);
 }
@@ -642,7 +642,7 @@ video {
     font-size: 1.125rem;
     padding: 0.75rem 1.5rem;
     border-radius: 1rem;
-    cursor: url('assets/hammer-cursor-128.png') 50 50, pointer;
+    cursor: url('assets/hammer-cursor-128.png') 299 299, pointer;
     transition: all 0.2s;
     box-shadow: var(--shadow);
     border: 4px solid;
