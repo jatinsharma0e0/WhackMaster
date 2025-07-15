@@ -669,9 +669,9 @@ function createCursorOverlay() {
     // Track mouse movement
     document.addEventListener('mousemove', updateOverlayPosition);
     
-    // Add rotation animation on any click anywhere on the page
+    // Add hammer hitting animation on any click anywhere on the page
     document.addEventListener('click', (e) => {
-        animateCursorRotation();
+        animateHammerHit(e.clientX, e.clientY);
     });
 }
 
@@ -682,16 +682,43 @@ function updateOverlayPosition(e) {
     }
 }
 
-function animateCursorRotation() {
-    if (cursorOverlay) {
-        // Add rotation animation to the cursor
-        cursorOverlay.classList.add('rotating');
+function animateHammerHit(x, y) {
+    // Create hammer animation element at click position
+    const hammerDiv = document.createElement('div');
+    hammerDiv.className = 'hammer-hit-animation';
+    hammerDiv.style.backgroundImage = "url('assets/hammer-cursor-128.png')";
+    hammerDiv.style.position = 'fixed';
+    hammerDiv.style.left = x + 'px';
+    hammerDiv.style.top = y + 'px';
+    hammerDiv.style.zIndex = '10000';
+    
+    document.body.appendChild(hammerDiv);
+    
+    // Create impact effect at the moment of hit
+    setTimeout(() => {
+        const impactDiv = document.createElement('div');
+        impactDiv.className = 'hammer-impact-effect';
+        impactDiv.style.position = 'fixed';
+        impactDiv.style.left = x + 'px';
+        impactDiv.style.top = y + 'px';
+        impactDiv.style.zIndex = '10001';
+        impactDiv.textContent = '💥';
+        document.body.appendChild(impactDiv);
         
-        // Remove rotation class after animation completes
+        // Remove impact effect
         setTimeout(() => {
-            cursorOverlay.classList.remove('rotating');
-        }, 300);
-    }
+            if (document.body.contains(impactDiv)) {
+                document.body.removeChild(impactDiv);
+            }
+        }, 200);
+    }, 240); // Show impact at 60% of animation (0.4s * 0.6 = 240ms)
+    
+    // Remove hammer animation after completion
+    setTimeout(() => {
+        if (document.body.contains(hammerDiv)) {
+            document.body.removeChild(hammerDiv);
+        }
+    }, 400);
 }
 
 
