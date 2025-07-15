@@ -5,10 +5,11 @@ A fun, classic Whack-a-Mole game built with pure HTML5, CSS3, and JavaScript - n
 ## Features
 
 ✅ **Complete Game Mechanics**
-- 30-second timer gameplay
+- 30-second timer gameplay with 3-second countdown start
 - 3x3 grid of holes with random mole spawning
+- Bomb system adds challenge (avoid the 💣!)
 - Score tracking with persistent high scores
-- Lives system and game over detection
+- Instant game over when hitting bombs
 
 ✅ **Visual Design**
 - Cute mole animations (pop-up effects)
@@ -38,11 +39,17 @@ A fun, classic Whack-a-Mole game built with pure HTML5, CSS3, and JavaScript - n
 
 ## How to Play
 
-1. Click "Start Game" to begin
+1. Click "Start Game" to begin (3-second countdown before starting)
 2. Hit moles as they randomly pop up from holes
-3. Each successful hit scores 10 points
-4. Try to get the highest score in 30 seconds!
-5. Beat your high score and challenge your friends
+3. **Avoid bombs** 💣 - they appear after 5 seconds and end the game instantly
+4. Each successful hit scores 10 points
+5. Try to get the highest score in 30 seconds!
+6. Beat your high score and challenge your friends
+
+### Controls
+- **Mouse**: Click directly on holes
+- **Keyboard**: Use numpad keys 1-9 for quick targeting
+- **Touch**: Fully responsive for mobile devices
 
 ## Running the Game
 
