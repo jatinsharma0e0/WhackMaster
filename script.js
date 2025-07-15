@@ -542,7 +542,7 @@ function teleportCursorToHole(holeIndex) {
     
     // Position the cursor at the hole center (adjust for hammer head position)
     tempCursor.style.position = 'fixed';
-    tempCursor.style.left = (centerX - 105) + 'px';
+    tempCursor.style.left = (centerX - 125) + 'px';
     tempCursor.style.top = (centerY - 15) + 'px';
     tempCursor.style.pointerEvents = 'none';
     tempCursor.style.zIndex = '9999';
