@@ -1,9 +1,9 @@
-modules = ["nodejs-20", "web", "python-3.11"]
+modules = ["nodejs-20", "python-3.11", "web"]
 run = "npm run dev"
 hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
 
 [nix]
-channel = "stable-24_05"
+channel = "stable-25_05"
 packages = ["freetype", "lcms2", "libimagequant", "libjpeg", "libtiff", "libwebp", "libxcrypt", "openjpeg", "tcl", "tk", "zlib"]
 
 [deployment]
@@ -35,3 +35,6 @@ author = "agent"
 task = "shell.exec"
 args = "python3 -m http.server 5000"
 waitForPort = 5000
+
+[agent]
+expertMode = true
