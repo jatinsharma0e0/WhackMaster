@@ -202,7 +202,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 ### Get in Touch
 - **Issues**: Report bugs or request features via GitHub Issues
 - **Discussions**: Share ideas and feedback in GitHub Discussions
-- **Email**: [jatin0e0help.com](mailto:jatin0e0help.com)
+- **Email**: [jatin0e0help@gmail.com](mailto:jatin0e0help@gmail.com)
 
 ### Support
 If you enjoy this game:
