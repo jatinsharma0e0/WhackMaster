@@ -2,18 +2,20 @@
 
 A fun and engaging browser-based Whack-a-Mole game built with pure HTML5, CSS3, and vanilla JavaScript. Challenge yourself to hit as many moles as possible while avoiding bombs in this classic arcade-style game!
 
+Play here 👉🏻 - [https://whackmaster.vercel.app]
+
 ## 🎮 Demo & Screenshots
 
-![Game Start](assets/screenshots/Screenshot1_1753363898733.png)
+![Game Start](assets/screenshots/Screenshot1.png)
 *Game start screen with 3x3 grid ready for action*
 
-![Gameplay](assets/screenshots/Screenshot2_1753363898734.png)
+![Gameplay](assets/screenshots/Screenshot2.png)
 *Active gameplay showing mole hits and scoring*
 
-![Bomb Gameplay](assets/screenshots/Screenshot3_1753363898735.png)
+![Bomb Gameplay](assets/screenshots/Screenshot3.png)
 *Advanced gameplay with moles and bombs appearing*
 
-![Game Over](assets/screenshots/Screenshot4_1753363898736.png)
+![Game Over](assets/screenshots/Screenshot4.png)
 *Game over screen with final score and replay option*
 
 ## ✨ Features
@@ -200,7 +202,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 ### Get in Touch
 - **Issues**: Report bugs or request features via GitHub Issues
 - **Discussions**: Share ideas and feedback in GitHub Discussions
-- **Email**: [your-email@example.com](mailto:your-email@example.com)
+- **Email**: [jatin0e0help.com](mailto:jatin0e0help.com)
 
 ### Support
 If you enjoy this game:
